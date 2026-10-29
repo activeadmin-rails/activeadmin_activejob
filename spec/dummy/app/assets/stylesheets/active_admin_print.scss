@@ -1,0 +1,3 @@
+// Entry point for dartsass:build to compile the ActiveAdmin print stylesheet.
+// Named differently to avoid circular resolution with the gem's active_admin/print.scss.
+@use "active_admin/print";

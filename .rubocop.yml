@@ -1,0 +1,34 @@
+plugins:
+  - rubocop-packaging
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - "spec/dummy/db/schema.rb"
+    - "spec/dummy/bin/*"
+    - "gemfiles/vendor/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+# The dummy app boots outside RSpec (e.g. `rails dartsass:build`).
+Packaging/BundlerSetupInTests:
+  Exclude:
+    - "spec/dummy/config/boot.rb"

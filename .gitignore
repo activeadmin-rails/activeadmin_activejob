@@ -1,0 +1,22 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/Gemfile.lock
+*gemfile.lock
+/pkg/
+/spec/reports/
+/spec/dummy/app/assets/builds/*
+!/spec/dummy/app/assets/builds/.keep
+tmp/
+*.log
+node_modules/
+
+# Database files
+*.sqlite3
+*.sqlite3-*
+
+# rspec failure tracking
+.rspec_status
+.rspec_failures
