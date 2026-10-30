@@ -1,0 +1,41 @@
+en:
+  activemodel:
+    models:
+      active_admin/jobs/failed_job:
+        one: Failed Job
+        other: Failed Jobs
+    attributes:
+      active_admin/jobs/failed_job:
+        exception_class: Exception
+        failed_at: Failed At
+        retried_at: Retried At
+        queue_name: Queue
+        job_class: Job Class
+        job_id: Job ID
+  active_admin:
+    jobs:
+      retry: Retry
+      discard: Remove
+      arguments: Arguments
+      raw: Raw
+      not_found: The job is no longer present.
+      retried:
+        one: 1 job retried.
+        other: "%{count} jobs retried."
+      discarded:
+        one: 1 job removed.
+        other: "%{count} jobs removed."
+      failed_jobs:
+        job: Job
+        retry_all: Retry All
+        retry_all_confirmation:
+          one: Retry 1 failed job?
+          other: Retry all %{count} failed jobs?
+        clear_retried: Clear Retried
+        clear_retried_confirmation: Remove all retried jobs?
+        clear_all: Clear All
+        clear_all_confirmation:
+          one: Remove 1 failed job?
+          other: Remove all %{count} failed jobs?
+        batch_retry_confirmation: Retry the selected jobs?
+        batch_discard_confirmation: Remove the selected jobs?

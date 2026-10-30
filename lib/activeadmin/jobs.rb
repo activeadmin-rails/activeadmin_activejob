@@ -9,6 +9,7 @@ require "activeadmin/jobs/adapters/base"
 require "activeadmin/jobs/job_record"
 require "activeadmin/jobs/failed_job"
 require "activeadmin/jobs/job_query"
+require "activeadmin/jobs/config"
 require "activeadmin/jobs/engine"
 
 module ActiveAdmin

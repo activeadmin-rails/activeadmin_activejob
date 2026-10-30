@@ -8,6 +8,44 @@ ActiveJob has no API for listing or acting on enqueued or failed jobs, so the pl
 talks to the queue backend through an adapter. Resque is the only backend planned
 for now.
 
+## Usage
+
+Each screen is an Active Admin resource backed by a controller you subclass in
+your Active Admin namespace (here `admin`).
+
+### Failed Jobs
+
+Lists failed jobs newest first, with retry and remove per job, as a batch action,
+and for the whole list ("Retry All", "Clear Retried", "Clear All").
+
+```ruby
+# app/controllers/admin/failed_jobs_controller.rb
+class Admin::FailedJobsController < ActiveAdmin::Jobs::FailedJobsController
+end
+
+# app/admin/failed_jobs.rb
+ActiveAdmin.configure_resource ActiveAdmin::Jobs::FailedJob, as: "FailedJob" do |config|
+  ActiveAdmin::Jobs::Config.failed_jobs(config)
+  # config.menu_item_options = { parent: "Jobs" }
+end
+```
+
+Override `app/views/admin/failed_jobs/_index_as_table.html.arb` or `_show.html.arb`
+to customise the pages.
+
+Retrying requeues the job's original Resque payload (no ActiveJob callbacks run)
+and marks the failure retried, as resque-web does. "Retry All" retries every
+failed job, oldest first, including those already retried.
+
+Authorization subjects are the resource classes (e.g. `ActiveAdmin::Jobs::FailedJob`).
+Besides the standard actions, retrying is authorized as `:retry`; removing is
+`ActiveAdmin::Auth::DESTROY`.
+
+Job arguments are shown with `Rails.application.config.filter_parameters` masked.
+
+Only Resque's Redis failure backend (alone or first in `Resque::Failure::Multiple`)
+is supported.
+
 ## Configuration
 
 ```ruby

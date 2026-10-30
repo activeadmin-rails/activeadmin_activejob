@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+panel I18n.t("active_admin.jobs.failed_jobs.job") do
+  attributes_table_for resource do
+    row :job_class
+    row :job_id
+    row :queue_name
+    row :executions
+    row :enqueued_at
+    row :failed_at
+    row :retried_at
+    row :worker
+  end
+end
+
+panel I18n.t("active_admin.jobs.arguments") do
+  pre JSON.pretty_generate(resource.arguments), class: "job-arguments"
+end
+
+panel resource.exception_class do
+  para resource.message
+  pre resource.backtrace.join("\n"), class: "job-backtrace"
+end
+
+panel I18n.t("active_admin.jobs.raw") do
+  pre JSON.pretty_generate(resource.entry), class: "job-raw"
+end

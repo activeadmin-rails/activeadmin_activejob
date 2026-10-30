@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+index_table_for(collection, default_table_options) do
+  selectable_column
+  column(:failed_at) { |job| link_to l(job.failed_at, format: :long), resource_path(job) if job.failed_at }
+  column :job_class
+  column :queue_name
+  column :exception_class
+  column(:message) { |job| job.message.to_s.truncate(120) }
+  if ActiveAdmin::Jobs::Config.show_retried?(collection)
+    column(:retried_at) { |job| l(job.retried_at, format: :short) if job.retried_at }
+  end
+  actions do |job|
+    if authorized?(:retry, job)
+      item I18n.t("active_admin.jobs.retry"), url_for(action: :retry, id: job.id), method: :post, class: "member_link"
+    end
+  end
+end
