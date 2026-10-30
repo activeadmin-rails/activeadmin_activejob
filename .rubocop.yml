@@ -40,6 +40,10 @@ Metrics/ModuleLength:
 Naming/PredicateMethod:
   Enabled: false
 
+# Job record classes are not ActiveRecord: .all returns a JobQuery or Array.
+Rails/RedundantActiveRecordAllMethod:
+  Enabled: false
+
 # params.expect needs Rails 8.
 Rails/StrongParametersExpect:
   Enabled: false

@@ -11,8 +11,9 @@ module ActiveAdmin
       include ActiveModel::Model
 
       # Identity and backend bookkeeping. +raw+ is the entry exactly as stored,
-      # used to verify the entry is unchanged before acting on it.
-      attr_accessor :id, :position, :raw
+      # used to verify the entry is unchanged before acting on it; +entry+ is it
+      # decoded, with filtered parameters masked, for display.
+      attr_accessor :id, :position, :raw, :entry
 
       # The job, unwrapped from the backend's payload.
       attr_accessor :job_class, :job_id, :queue_name, :arguments, :executions, :enqueued_at, :scheduled_at
@@ -37,6 +38,10 @@ module ActiveAdmin
 
       def persisted?
         true
+      end
+
+      def to_param
+        Param.encode(id)
       end
 
       def display_name

@@ -19,6 +19,19 @@ module ResqueHelpers
     end
   end
 
+  # Enqueue a TestJob on +queue+ for each of +args+.
+  def enqueue_jobs(*args, queue: "default")
+    args.each { |arg| TestJob.set(queue:).perform_later(arg) }
+  end
+
+  # Register a worker, optionally working on the next job from its first queue.
+  def register_worker(*queues, working: false)
+    worker = Resque::Worker.new(*queues)
+    worker.register_worker
+    worker.working_on(Resque::Job.reserve(queues.first)) if working
+    worker
+  end
+
   def failed_entries
     Resque.redis.lrange("failed", 0, -1).map { |json| Resque.decode(json) }
   end

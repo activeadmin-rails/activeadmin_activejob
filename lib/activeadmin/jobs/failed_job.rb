@@ -4,7 +4,7 @@ module ActiveAdmin
   module Jobs
     # A job that raised an exception and was recorded by the backend's failure store.
     class FailedJob < JobRecord
-      attr_accessor :failed_at, :retried_at, :exception_class, :message, :backtrace, :worker, :entry
+      attr_accessor :failed_at, :retried_at, :exception_class, :message, :backtrace, :worker
 
       def self.status
         :failed

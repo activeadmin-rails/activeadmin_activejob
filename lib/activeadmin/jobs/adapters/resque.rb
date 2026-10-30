@@ -3,6 +3,8 @@
 require "resque"
 require "activeadmin/jobs/adapters/resque/payload"
 require "activeadmin/jobs/adapters/resque/failures"
+require "activeadmin/jobs/adapters/resque/queues"
+require "activeadmin/jobs/adapters/resque/workers"
 
 module ActiveAdmin
   module Jobs
@@ -15,10 +17,17 @@ module ActiveAdmin
       class Resque < Base
         include Payload
         include Failures
+        include Queues
+        include Workers
+
+        def supports?(feature)
+          feature == :workers
+        end
 
         def count_jobs(query)
           case query.status
           when :failed then count_failures(query)
+          when :pending then count_pending(query)
           else unsupported_status(query)
           end
         end
@@ -26,6 +35,7 @@ module ActiveAdmin
         def fetch_jobs(query)
           case query.status
           when :failed then fetch_failures(query)
+          when :pending then fetch_pending(query)
           else unsupported_status(query)
           end
         end
@@ -33,6 +43,7 @@ module ActiveAdmin
         def find_job(id, query)
           case query.status
           when :failed then find_failure(id)
+          when :pending then find_pending(id)
           else unsupported_status(query)
           end
         end
@@ -47,6 +58,7 @@ module ActiveAdmin
         def discard_job(job)
           case job
           when FailedJob then discard_failure(job)
+          when QueuedJob then discard_pending(job)
           else unsupported_status(job.class)
           end
         end

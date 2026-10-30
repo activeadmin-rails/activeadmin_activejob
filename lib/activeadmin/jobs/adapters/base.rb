@@ -18,11 +18,12 @@ module ActiveAdmin
 
         # Queues
 
-        # @return [Array<Hash>] each with :name, :size and :paused
+        # @return [Array<ActiveAdmin::Jobs::Queue>]
         def queues
           not_implemented :queues
         end
 
+        # @return [Integer] the number of jobs removed
         def clear_queue(_name)
           not_implemented :clear_queue
         end
@@ -64,10 +65,12 @@ module ActiveAdmin
           not_implemented :enqueue_now
         end
 
+        # @return [Array<ActiveAdmin::Jobs::Worker>]
         def workers
           not_implemented :workers
         end
 
+        # @return [Hash] backend statistics for display, e.g. :pending, :processed, :failed
         def stats
           not_implemented :stats
         end
