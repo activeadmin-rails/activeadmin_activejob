@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+index_table_for(collection, default_table_options) do
+  selectable_column
+  column(:scheduled_at) { |job| link_to l(job.scheduled_at, format: :long), resource_path(job) }
+  column :job_class
+  column :queue_name
+  column(:arguments) { |job| job.arguments.to_json.truncate(120) }
+  actions do |job|
+    if authorized?(:enqueue_now, job)
+      item I18n.t("active_admin.jobs.enqueue_now"), url_for(action: :enqueue_now, id: job.to_param),
+           method: :post, class: "member_link"
+    end
+  end
+end

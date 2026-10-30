@@ -18,4 +18,11 @@ RSpec.describe "Jobs overview" do
     expect(page).to have_css ".panel h3", text: "1 Worker Working"
     expect(page).to have_css "table.job-stats td", text: "Redis version"
   end
+
+  it "links to scheduled jobs" do
+    schedule_jobs("s")
+    get "/admin/jobs"
+
+    expect(page).to have_link "1 scheduled job", href: "/admin/scheduled_jobs"
+  end
 end

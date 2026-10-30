@@ -51,13 +51,14 @@ Job arguments are shown with `Rails.application.config.filter_parameters` masked
 Only Resque's Redis failure backend (alone or first in `Resque::Failure::Multiple`)
 is supported.
 
-### Queues, Queued Jobs, Workers and the Jobs overview
+### Queued Jobs, Scheduled Jobs, Queues, Workers and the Jobs overview
 
 Register the other screens the same way, each with a controller subclass:
 
 | Resource / page | Controller superclass | Configuration |
 |---|---|---|
 | `configure_resource ActiveAdmin::Jobs::QueuedJob, as: "QueuedJob"` | `ActiveAdmin::Jobs::QueuedJobsController` | `Config.queued_jobs(config)` |
+| `configure_resource ActiveAdmin::Jobs::ScheduledJob, as: "ScheduledJob"` | `ActiveAdmin::Jobs::ScheduledJobsController` | `Config.scheduled_jobs(config)` |
 | `configure_resource ActiveAdmin::Jobs::Queue, as: "Queue"` | `ActiveAdmin::Jobs::QueuesController` | `Config.queues(config)` |
 | `configure_resource ActiveAdmin::Jobs::Worker, as: "Worker"` | `ActiveAdmin::Jobs::WorkersController` | `Config.workers(config)` |
 | `configure_page "Jobs"` | `ActiveAdmin::Jobs::OverviewController` | `Config.overview(config)` |
@@ -65,9 +66,12 @@ Register the other screens the same way, each with a controller subclass:
 - **Queued Jobs** lists one queue's jobs in the order they will run (`?queue=`,
   default the first queue), with a sidebar of queues. Jobs can be removed singly
   or in batches.
+- **Scheduled Jobs** (needs resque-scheduler) lists delayed jobs soonest first,
+  with "Enqueue Now" and remove per job and in batches, and "Clear All".
+  Enqueuing now is authorized as `:enqueue_now`.
 - **Queues** lists queue sizes. "Clear" removes a queue and its jobs, as resque-web does.
 - **Workers** lists registered workers, working first, with their current jobs (read only).
-- **Jobs** (overview page) shows queue sizes, the failed job count, working
+- **Jobs** (overview page) shows queue sizes, failed and scheduled job counts, working
   workers and Resque/Redis statistics, linking to the screens that are registered.
 
 Queue names and worker ids may contain dots; they are percent-encoded in URLs.

@@ -27,6 +27,34 @@ module ActiveAdmin
                                 if: proc { authorized?(ActiveAdmin::Auth::DESTROY, active_admin_config.resource_class) }
       end
 
+      def scheduled_jobs(config)
+        read_only_jobs(config)
+        config.add_member_route :enqueue_now, method: :post
+        config.add_collection_route :clear_all, method: :delete
+        scheduled_job_batch_actions(config)
+
+        config.add_action_item :enqueue_now, only: :show do
+          if authorized?(:enqueue_now, resource)
+            link_to I18n.t("active_admin.jobs.enqueue_now"), url_for(action: :enqueue_now, id: resource.to_param),
+                    method: :post
+          end
+        end
+        collection_action_item(config, :clear_all, :delete, ActiveAdmin::Auth::DESTROY)
+      end
+
+      def scheduled_job_batch_actions(config)
+        config.batch_actions = true
+        config.remove_batch_action :destroy
+        config.add_batch_action :enqueue_now, proc { I18n.t("active_admin.jobs.enqueue_now") },
+                                priority: 1,
+                                confirm: proc { I18n.t("active_admin.jobs.scheduled_jobs.batch_enqueue_confirmation") },
+                                if: proc { authorized?(:enqueue_now, active_admin_config.resource_class) }
+        config.add_batch_action :discard, proc { I18n.t("active_admin.jobs.discard") },
+                                priority: 2,
+                                confirm: proc { I18n.t("active_admin.jobs.scheduled_jobs.batch_discard_confirmation") },
+                                if: proc { authorized?(ActiveAdmin::Auth::DESTROY, active_admin_config.resource_class) }
+      end
+
       def queues(config)
         read_only_jobs(config)
         config.batch_actions = false
@@ -77,7 +105,7 @@ module ActiveAdmin
       def failed_job_action_items(config)
         config.add_action_item :retry, only: :show do
           if authorized?(:retry, resource)
-            link_to I18n.t("active_admin.jobs.retry"), url_for(action: :retry, id: resource.id), method: :post
+            link_to I18n.t("active_admin.jobs.retry"), url_for(action: :retry, id: resource.to_param), method: :post
           end
         end
 

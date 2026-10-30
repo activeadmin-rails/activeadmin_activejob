@@ -7,6 +7,9 @@ en:
       active_admin/jobs/queued_job:
         one: Queued Job
         other: Queued Jobs
+      active_admin/jobs/scheduled_job:
+        one: Scheduled Job
+        other: Scheduled Jobs
       active_admin/jobs/queue:
         one: Queue
         other: Queues
@@ -25,6 +28,10 @@ en:
         queue_name: Queue
         job_class: Job Class
         job_id: Job ID
+      active_admin/jobs/scheduled_job:
+        queue_name: Queue
+        job_class: Job Class
+        job_id: Job ID
       active_admin/jobs/worker:
         pid: PID
         job_class: Job Class
@@ -35,6 +42,7 @@ en:
     jobs:
       retry: Retry
       discard: Remove
+      enqueue_now: Enqueue Now
       arguments: Arguments
       raw: Raw
       not_found: The job is no longer present.
@@ -47,6 +55,9 @@ en:
       discarded:
         one: 1 job removed.
         other: "%{count} jobs removed."
+      enqueued:
+        one: 1 job enqueued.
+        other: "%{count} jobs enqueued."
       failed_jobs:
         job: Job
         retry_all: Retry All
@@ -64,6 +75,13 @@ en:
       queued_jobs:
         title: "Queued Jobs: %{queue}"
         batch_discard_confirmation: Remove the selected jobs from the queue?
+      scheduled_jobs:
+        clear_all: Clear All
+        clear_all_confirmation:
+          one: Remove 1 scheduled job?
+          other: Remove all %{count} scheduled jobs?
+        batch_enqueue_confirmation: Enqueue the selected jobs now?
+        batch_discard_confirmation: Remove the selected scheduled jobs?
       queues:
         clear: Clear
         clear_confirmation:
@@ -86,3 +104,6 @@ en:
         failed_count:
           one: 1 failed job
           other: "%{count} failed jobs"
+        scheduled_count:
+          one: 1 scheduled job
+          other: "%{count} scheduled jobs"

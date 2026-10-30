@@ -16,6 +16,10 @@ columns do
         column :size
       end
       para link.call(I18n.t("active_admin.jobs.overview.failed_count", count: stats[:failed]), ActiveAdmin::Jobs::FailedJob)
+      if stats.key?(:scheduled)
+        para link.call(I18n.t("active_admin.jobs.overview.scheduled_count", count: stats[:scheduled]),
+                       ActiveAdmin::Jobs::ScheduledJob)
+      end
     end
 
     if adapter.supports?(:workers)
