@@ -9,6 +9,7 @@ module ActiveAdmin
     # The block is called lazily, so registering an adapter does not load its backend.
     module Adapters
       class UnsupportedAdapter < Error; end
+      class UnsupportedBackend < Error; end
 
       @factories = {}
 

@@ -4,7 +4,7 @@
 class TestJob < ApplicationJob
   queue_as :default
 
-  def perform(fail: false)
+  def perform(*_args, fail: false)
     raise ArgumentError, "TestJob failed" if fail
   end
 end

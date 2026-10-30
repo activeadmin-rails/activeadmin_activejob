@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 require "active_job"
+require "active_support/parameter_filter"
 require "activeadmin/jobs/version"
 require "activeadmin/jobs/error"
 require "activeadmin/jobs/adapters"
 require "activeadmin/jobs/adapters/base"
+require "activeadmin/jobs/job_record"
+require "activeadmin/jobs/failed_job"
+require "activeadmin/jobs/job_query"
 require "activeadmin/jobs/engine"
 
 module ActiveAdmin
@@ -22,8 +26,13 @@ module ActiveAdmin
       # memory (e.g. failed jobs by class or exception).
       attr_accessor :scan_limit
 
-      # Remove failed jobs when they are retried, instead of marking them retried.
+      # Remove failed jobs when they are retried (default), instead of marking
+      # them retried as resque-web does.
       attr_accessor :remove_on_retry
+
+      # Parameter names masked in displayed job arguments. Defaults to
+      # Rails.application.config.filter_parameters.
+      attr_writer :filter_parameters
 
       def configure
         yield self
@@ -38,15 +47,32 @@ module ActiveAdmin
         @adapter ||= Adapters.lookup(adapter_name)
       end
 
+      def filter_parameters
+        @filter_parameters || (defined?(Rails) && Rails.application&.config&.filter_parameters) || []
+      end
+
+      # Masks filter_parameters in job arguments (or any nested Hash/Array).
+      def filter_arguments(value)
+        return value unless value.is_a?(Hash) || value.is_a?(Array)
+
+        ActiveSupport::ParameterFilter.new(filter_parameters).filter("value" => value)["value"]
+      end
+
       # Restore default configuration, e.g. between tests.
       def reset!
         @adapter = nil
         @adapter_name = nil
+        @filter_parameters = nil
         self.scan_limit = 5_000
-        self.remove_on_retry = false
+        self.remove_on_retry = true
       end
     end
 
     reset!
+
+    Adapters.register(:resque) do
+      require "activeadmin/jobs/adapters/resque"
+      Adapters::Resque.new
+    end
   end
 end

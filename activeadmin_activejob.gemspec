@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "activeadmin-rails", ">= 1.8"
   spec.add_dependency "activejob", ">= 7.1"
+  spec.add_dependency "kaminari", ">= 1.2"
 end

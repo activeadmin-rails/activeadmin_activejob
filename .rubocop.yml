@@ -25,8 +25,30 @@ Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
 
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - "lib/activeadmin/jobs/config.rb" # declarative resource configuration
+
+Metrics/ModuleLength:
+  Max: 160
+
+# Adapter actions return whether they succeeded.
+Naming/PredicateMethod:
+  Enabled: false
+
+# params.expect needs Rails 8.
+Rails/StrongParametersExpect:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 10
+
 RSpec/MultipleExpectations:
-  Max: 3
+  Max: 5
 
 # The dummy app boots outside RSpec (e.g. `rails dartsass:build`).
 Packaging/BundlerSetupInTests:
