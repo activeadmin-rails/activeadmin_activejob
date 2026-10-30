@@ -4,6 +4,15 @@ en:
       active_admin/jobs/failed_job:
         one: Failed Job
         other: Failed Jobs
+      active_admin/jobs/queued_job:
+        one: Queued Job
+        other: Queued Jobs
+      active_admin/jobs/queue:
+        one: Queue
+        other: Queues
+      active_admin/jobs/worker:
+        one: Worker
+        other: Workers
     attributes:
       active_admin/jobs/failed_job:
         exception_class: Exception
@@ -12,6 +21,16 @@ en:
         queue_name: Queue
         job_class: Job Class
         job_id: Job ID
+      active_admin/jobs/queued_job:
+        queue_name: Queue
+        job_class: Job Class
+        job_id: Job ID
+      active_admin/jobs/worker:
+        pid: PID
+        job_class: Job Class
+        job_id: Job ID
+        job_queue: Queue
+        heartbeat_at: Heartbeat
   active_admin:
     jobs:
       retry: Retry
@@ -42,3 +61,28 @@ en:
           other: Remove all %{count} failed jobs?
         batch_retry_confirmation: Retry the selected jobs?
         batch_discard_confirmation: Remove the selected jobs?
+      queued_jobs:
+        title: "Queued Jobs: %{queue}"
+        batch_discard_confirmation: Remove the selected jobs from the queue?
+      queues:
+        clear: Clear
+        clear_confirmation:
+          one: Remove queue %{queue} and its 1 job?
+          other: Remove queue %{queue} and its %{count} jobs?
+        cleared:
+          one: Queue %{queue} removed with 1 job.
+          other: Queue %{queue} removed with %{count} jobs.
+        not_found: The queue is no longer present.
+      workers:
+        worker: Worker
+        current_job: Current Job
+        not_found: The worker is no longer present.
+      overview:
+        queues: Queues
+        working:
+          one: 1 Worker Working
+          other: "%{count} Workers Working"
+        stats: Statistics
+        failed_count:
+          one: 1 failed job
+          other: "%{count} failed jobs"

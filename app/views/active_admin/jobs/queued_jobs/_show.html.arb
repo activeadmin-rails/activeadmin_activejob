@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+panel I18n.t("active_admin.jobs.failed_jobs.job") do
+  attributes_table_for resource do
+    row :job_class
+    row :job_id
+    row :queue_name
+    row(:position) { |job| job.position + 1 }
+    row :executions
+    row :enqueued_at
+    row :scheduled_at
+  end
+end
+
+panel I18n.t("active_admin.jobs.arguments") do
+  pre JSON.pretty_generate(resource.arguments), class: "job-arguments"
+end
+
+panel I18n.t("active_admin.jobs.raw") do
+  pre JSON.pretty_generate(resource.entry), class: "job-raw"
+end

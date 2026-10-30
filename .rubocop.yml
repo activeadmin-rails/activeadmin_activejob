@@ -24,6 +24,7 @@ Style/StringLiteralsInInterpolation:
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
+    - "app/views/**/*"
 
 Metrics/AbcSize:
   Max: 25

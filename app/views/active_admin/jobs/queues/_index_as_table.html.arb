@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+index_table_for(collection, default_table_options) do
+  column(:name) do |queue|
+    namespace = active_admin_config.namespace
+    path = ActiveAdmin::Jobs::Config.path_for(namespace, ActiveAdmin::Jobs::QueuedJob, queue: queue.name)
+    path ? link_to(queue.name, path) : queue.name
+  end
+  column :size
+  actions defaults: false do |queue|
+    if authorized?(ActiveAdmin::Auth::DESTROY, queue)
+      confirm = I18n.t("active_admin.jobs.queues.clear_confirmation", queue: queue.name, count: queue.size)
+      item I18n.t("active_admin.jobs.queues.clear"), resource_path(queue),
+           method: :delete, class: "member_link", data: { confirm: }
+    end
+  end
+end

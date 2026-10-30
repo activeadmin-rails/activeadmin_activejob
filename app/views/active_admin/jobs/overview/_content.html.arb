@@ -1,0 +1,42 @@
+# frozen_string_literal: true
+
+namespace = active_admin_config.namespace
+adapter = ActiveAdmin::Jobs.adapter
+stats = adapter.stats
+link = lambda do |text, resource_class, params = {}|
+  path = ActiveAdmin::Jobs::Config.path_for(namespace, resource_class, params)
+  path ? link_to(text, path) : text
+end
+
+columns do
+  column do
+    panel I18n.t("active_admin.jobs.overview.queues") do
+      table_for adapter.queues do
+        column(:name) { |queue| link.call(queue.name, ActiveAdmin::Jobs::QueuedJob, queue: queue.name) }
+        column :size
+      end
+      para link.call(I18n.t("active_admin.jobs.overview.failed_count", count: stats[:failed]), ActiveAdmin::Jobs::FailedJob)
+    end
+
+    if adapter.supports?(:workers)
+      working = adapter.workers.select(&:working?)
+      panel I18n.t("active_admin.jobs.overview.working", count: working.size) do
+        table_for working do
+          column(:worker, &:id)
+          column :job_queue
+          column :job_class
+          column :run_at
+        end
+      end
+    end
+  end
+
+  column do
+    panel I18n.t("active_admin.jobs.overview.stats") do
+      table_for stats.except(:servers).to_a, class: "job-stats" do
+        column(:name) { |name, _| name.to_s.humanize }
+        column(:value) { |_, value| value }
+      end
+    end
+  end
+end

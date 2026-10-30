@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+panel I18n.t("active_admin.jobs.workers.worker") do
+  attributes_table_for resource do
+    row :id
+    row :host
+    row :pid
+    row(:queues) { |worker| worker.queues.join(", ") }
+    row(:state) { |worker| status_tag worker.state, class: (worker.working? ? "yes" : "no") }
+    row :started_at
+    row :heartbeat_at
+    row :processed
+    row :failed
+  end
+end
+
+if resource.working?
+  panel I18n.t("active_admin.jobs.workers.current_job") do
+    attributes_table_for resource do
+      row :job_class
+      row :job_id
+      row :job_queue
+      row :run_at
+    end
+    pre JSON.pretty_generate(resource.arguments), class: "job-arguments"
+  end
+end

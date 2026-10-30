@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+ul do
+  queues.each do |queue|
+    li class: ("current" if queue.name == current_queue) do
+      link_to "#{queue.name} (#{queue.size})", url_for(queue: queue.name)
+    end
+  end
+end

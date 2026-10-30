@@ -16,7 +16,7 @@ your Active Admin namespace (here `admin`).
 ### Failed Jobs
 
 Lists failed jobs newest first, with retry and remove per job, as a batch action,
-and for the whole list ("Retry All", "Clear Retried", "Clear All").
+and for the whole list ("Retry All", "Clear All").
 
 ```ruby
 # app/controllers/admin/failed_jobs_controller.rb
@@ -34,8 +34,13 @@ Override `app/views/admin/failed_jobs/_index_as_table.html.arb` or `_show.html.a
 to customise the pages.
 
 Retrying requeues the job's original Resque payload (no ActiveJob callbacks run)
-and marks the failure retried, as resque-web does. "Retry All" retries every
-failed job, oldest first, including those already retried.
+and removes the failure. "Retry All" retries every failed job, oldest first,
+skipping any marked retried by resque-web; "Clear Retried" and a Retried At column
+appear while such entries exist.
+
+With `remove_on_retry = false`, retrying instead marks the failure retried, as
+resque-web does, and "Retry All" retries every entry, including those already
+retried.
 
 Authorization subjects are the resource classes (e.g. `ActiveAdmin::Jobs::FailedJob`).
 Besides the standard actions, retrying is authorized as `:retry`; removing is
@@ -46,6 +51,27 @@ Job arguments are shown with `Rails.application.config.filter_parameters` masked
 Only Resque's Redis failure backend (alone or first in `Resque::Failure::Multiple`)
 is supported.
 
+### Queues, Queued Jobs, Workers and the Jobs overview
+
+Register the other screens the same way, each with a controller subclass:
+
+| Resource / page | Controller superclass | Configuration |
+|---|---|---|
+| `configure_resource ActiveAdmin::Jobs::QueuedJob, as: "QueuedJob"` | `ActiveAdmin::Jobs::QueuedJobsController` | `Config.queued_jobs(config)` |
+| `configure_resource ActiveAdmin::Jobs::Queue, as: "Queue"` | `ActiveAdmin::Jobs::QueuesController` | `Config.queues(config)` |
+| `configure_resource ActiveAdmin::Jobs::Worker, as: "Worker"` | `ActiveAdmin::Jobs::WorkersController` | `Config.workers(config)` |
+| `configure_page "Jobs"` | `ActiveAdmin::Jobs::OverviewController` | `Config.overview(config)` |
+
+- **Queued Jobs** lists one queue's jobs in the order they will run (`?queue=`,
+  default the first queue), with a sidebar of queues. Jobs can be removed singly
+  or in batches.
+- **Queues** lists queue sizes. "Clear" removes a queue and its jobs, as resque-web does.
+- **Workers** lists registered workers, working first, with their current jobs (read only).
+- **Jobs** (overview page) shows queue sizes, the failed job count, working
+  workers and Resque/Redis statistics, linking to the screens that are registered.
+
+Queue names and worker ids may contain dots; they are percent-encoded in URLs.
+
 ## Configuration
 
 ```ruby
@@ -53,7 +79,7 @@ is supported.
 ActiveAdmin::Jobs.configure do |config|
   config.adapter_name = :resque  # defaults to config.active_job.queue_adapter
   config.scan_limit = 5_000      # max entries read for in-memory filters
-  config.remove_on_retry = false # true: remove failed jobs on retry instead of marking them retried
+  config.remove_on_retry = true  # false: mark failed jobs retried instead (resque-web behaviour)
 end
 ```
 

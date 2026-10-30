@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+index_table_for(collection, default_table_options) do
+  selectable_column
+  column(:position) { |job| link_to job.position + 1, resource_path(job) }
+  column :job_class
+  column :job_id
+  column(:arguments) { |job| job.arguments.to_json.truncate(120) }
+  column :enqueued_at
+  column :scheduled_at
+  actions
+end

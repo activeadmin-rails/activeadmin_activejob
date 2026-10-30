@@ -11,6 +11,42 @@ module ActiveAdmin
     module Config
       module_function
 
+      # Path to the index of another job resource in +namespace+, or nil when
+      # the host application has not registered it.
+      def path_for(namespace, resource_class, params = {})
+        namespace.resource_for(resource_class)&.route_collection_path({}, params)
+      end
+
+      def queued_jobs(config)
+        read_only_jobs(config, title: proc { I18n.t("active_admin.jobs.queued_jobs.title", queue: current_queue) })
+        config.add_sidebar_section "Queues", only: :index, partial: "queues_sidebar"
+        config.batch_actions = true
+        config.remove_batch_action :destroy
+        config.add_batch_action :discard, proc { I18n.t("active_admin.jobs.discard") },
+                                confirm: proc { I18n.t("active_admin.jobs.queued_jobs.batch_discard_confirmation") },
+                                if: proc { authorized?(ActiveAdmin::Auth::DESTROY, active_admin_config.resource_class) }
+      end
+
+      def queues(config)
+        read_only_jobs(config)
+        config.batch_actions = false
+      end
+
+      def workers(config)
+        read_only_jobs(config)
+        config.batch_actions = false
+      end
+
+      # The overview page needs no configuration yet; kept for symmetry.
+      def overview(_config); end
+
+      # Index options are set once: the first index presenter is the default.
+      def read_only_jobs(config, **index_options)
+        config.filters = false
+        config.current_filters = false
+        config.set_page_options :index, download_links: false, **index_options
+      end
+
       def failed_jobs(config)
         config.filters = false
         config.current_filters = false
