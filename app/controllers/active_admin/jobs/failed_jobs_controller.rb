@@ -9,25 +9,14 @@ module ActiveAdmin
     #
     # and configure the resource with ActiveAdmin::Jobs::Config.failed_jobs.
     class FailedJobsController < ActiveAdmin::ResourceController
-      actions :index, :show, :destroy
+      include JobActions
 
-      rescue_from JobNotFound do
-        redirect_to collection_path, alert: I18n.t("active_admin.jobs.not_found")
-      end
+      actions :index, :show, :destroy
 
       def retry
         authorize! :retry, resource
         if ActiveAdmin::Jobs.adapter.retry_job(resource)
           redirect_to collection_path, notice: I18n.t("active_admin.jobs.retried", count: 1)
-        else
-          redirect_to collection_path, alert: I18n.t("active_admin.jobs.not_found")
-        end
-      end
-
-      def destroy
-        authorize! ActiveAdmin::Auth::DESTROY, resource
-        if ActiveAdmin::Jobs.adapter.discard_job(resource)
-          redirect_to collection_path, notice: I18n.t("active_admin.jobs.discarded", count: 1)
         else
           redirect_to collection_path, alert: I18n.t("active_admin.jobs.not_found")
         end
@@ -53,31 +42,9 @@ module ActiveAdmin
 
       protected
 
-      def scoped_collection
-        resource_class.all
-      end
-
-      def find_resource
-        scoped_collection.find(params[:id])
-      end
-
       def batch_action_retry(ids, _inputs)
         count = batch_jobs(ids, :retry).count { |job| ActiveAdmin::Jobs.adapter.retry_job(job) }
-        redirect_to collection_path, notice: I18n.t("active_admin.jobs.retried", count:)
-      end
-
-      def batch_action_discard(ids, _inputs)
-        count = batch_jobs(ids, ActiveAdmin::Auth::DESTROY).count { |job| ActiveAdmin::Jobs.adapter.discard_job(job) }
-        redirect_to collection_path, notice: I18n.t("active_admin.jobs.discarded", count:)
-      end
-
-      private
-
-      # Jobs still present, authorized for +action+, last position first.
-      def batch_jobs(ids, action)
-        jobs = Array(ids).filter_map { |id| scoped_collection.find_by(id:) }
-        jobs.each { |job| authorize! action, job }
-        jobs.sort_by { |job| -job.position }
+        redirect_after_batch("active_admin.jobs.retried", count, ids)
       end
     end
   end

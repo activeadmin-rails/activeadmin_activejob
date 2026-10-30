@@ -7,6 +7,7 @@ module ActiveAdmin
         # Failed jobs in Resque's Redis failure list.
         #
         # Entries are identified by position plus content digest (Payload#entry_id).
+        # The digest ignores +retried_at+, so marking a job retried keeps its id.
         # Before changing an entry by position the adapter checks, under WATCH, that
         # the stored entry is unchanged, and looks for it again if it has moved.
         module Failures
@@ -36,10 +37,10 @@ module ActiveAdmin
           def find_failure(id)
             position, digest = parse_entry_id(id)
             json = redis.lindex(failed_key, position) if position
-            return build_failure(json, position) if json && digest(json) == digest
+            return build_failure(json, position) if json && failure_digest(json) == digest
 
             each_failure(limit: ActiveAdmin::Jobs.scan_limit) do |entry, pos|
-              return build_failure(entry, pos) if digest(entry) == digest
+              return build_failure(entry, pos) if failure_digest(entry) == digest
             end
             nil
           end
@@ -189,7 +190,7 @@ module ActiveAdmin
             attributes = payload_attributes(entry["payload"])
             FailedJob.new(
               **attributes,
-              id: entry_id(json, position),
+              id: "#{position}-#{failure_digest(entry)}",
               position:,
               raw: json,
               entry: ActiveAdmin::Jobs.filter_arguments(entry),
@@ -201,6 +202,11 @@ module ActiveAdmin
               backtrace: Array(entry["backtrace"]),
               worker: entry["worker"]
             )
+          end
+
+          def failure_digest(entry)
+            entry = ::Resque.decode(entry) if entry.is_a?(String)
+            digest(::Resque.encode(entry.except("retried_at")))
           end
 
           def failed_key

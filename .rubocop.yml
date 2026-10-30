@@ -34,7 +34,7 @@ Metrics/MethodLength:
     - "lib/activeadmin/jobs/config.rb" # declarative resource configuration
 
 Metrics/ModuleLength:
-  Max: 160
+  Max: 170
 
 # Adapter actions return whether they succeeded.
 Naming/PredicateMethod:

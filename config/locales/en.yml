@@ -19,6 +19,9 @@ en:
       arguments: Arguments
       raw: Raw
       not_found: The job is no longer present.
+      missing:
+        one: 1 of the selected jobs is no longer present.
+        other: "%{count} of the selected jobs are no longer present."
       retried:
         one: 1 job retried.
         other: "%{count} jobs retried."

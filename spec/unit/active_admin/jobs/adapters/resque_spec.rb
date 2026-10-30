@@ -177,6 +177,16 @@ RSpec.describe ActiveAdmin::Jobs::Adapters::Resque do
     end
   end
 
+  it "keeps a failed job's id when marking it retried" do
+    ActiveAdmin::Jobs.remove_on_retry = false
+    fail_jobs("a")
+    job = failed.first
+
+    adapter.retry_job(job)
+    expect(failed.first.id).to eq job.id
+    expect(failed.find(job.id)).to be_retried
+  end
+
   describe "#discard_job" do
     before { fail_jobs("a", "b") }
 

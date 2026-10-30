@@ -156,6 +156,15 @@ RSpec.describe "Failed Jobs" do
       expect(queued_arguments).to eq %w[c a]
     end
 
+    it "reports selected jobs that are no longer present" do
+      ids = selection
+      ActiveAdmin::Jobs.adapter.discard_job(job_with("a"))
+      post "/admin/failed_jobs/batch_action", params: { batch_action: "retry", collection_selection: ids }
+
+      expect(flash[:notice]).to eq "1 job retried."
+      expect(flash[:alert]).to eq "1 of the selected jobs is no longer present."
+    end
+
     it "removes the selected jobs" do
       post "/admin/failed_jobs/batch_action", params: { batch_action: "discard", collection_selection: selection }
 
