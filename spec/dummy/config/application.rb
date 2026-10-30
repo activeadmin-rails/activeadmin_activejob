@@ -10,6 +10,7 @@ require "action_view/railtie"
 
 Bundler.require(*Rails.groups)
 require "resque"
+require "resque-scheduler"
 require "activeadmin_activejob"
 
 module Dummy

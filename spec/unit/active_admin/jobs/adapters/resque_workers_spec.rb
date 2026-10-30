@@ -8,7 +8,7 @@ RSpec.describe ActiveAdmin::Jobs::Adapters::Resque do
 
   it "supports workers" do
     expect(adapter.supports?(:workers)).to be true
-    expect(adapter.supports?(:scheduled_jobs)).to be false
+    expect(adapter.supports?(:recurring_tasks)).to be false
   end
 
   describe "#workers" do

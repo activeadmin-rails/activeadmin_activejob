@@ -5,6 +5,7 @@ require "activeadmin/jobs/adapters/resque/payload"
 require "activeadmin/jobs/adapters/resque/failures"
 require "activeadmin/jobs/adapters/resque/queues"
 require "activeadmin/jobs/adapters/resque/workers"
+require "activeadmin/jobs/adapters/resque/scheduled"
 
 module ActiveAdmin
   module Jobs
@@ -19,15 +20,21 @@ module ActiveAdmin
         include Failures
         include Queues
         include Workers
+        include Scheduled
 
         def supports?(feature)
-          feature == :workers
+          case feature
+          when :workers then true
+          when :scheduled_jobs then scheduler?
+          else false
+          end
         end
 
         def count_jobs(query)
           case query.status
           when :failed then count_failures(query)
           when :pending then count_pending(query)
+          when :scheduled then count_scheduled(query)
           else unsupported_status(query)
           end
         end
@@ -36,6 +43,7 @@ module ActiveAdmin
           case query.status
           when :failed then fetch_failures(query)
           when :pending then fetch_pending(query)
+          when :scheduled then fetch_scheduled(query)
           else unsupported_status(query)
           end
         end
@@ -44,6 +52,7 @@ module ActiveAdmin
           case query.status
           when :failed then find_failure(id)
           when :pending then find_pending(id)
+          when :scheduled then find_scheduled(id)
           else unsupported_status(query)
           end
         end
@@ -59,6 +68,7 @@ module ActiveAdmin
           case job
           when FailedJob then discard_failure(job)
           when QueuedJob then discard_pending(job)
+          when ScheduledJob then discard_scheduled(job)
           else unsupported_status(job.class)
           end
         end
@@ -73,7 +83,15 @@ module ActiveAdmin
         def discard_all(query)
           case query.status
           when :failed then discard_failures(query)
+          when :scheduled then discard_all_scheduled(query)
           else unsupported_status(query)
+          end
+        end
+
+        def enqueue_now(job)
+          case job
+          when ScheduledJob then enqueue_scheduled(job)
+          else unsupported_status(job.class)
           end
         end
 

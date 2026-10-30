@@ -23,6 +23,7 @@ module ActiveAdmin
 
           def stats
             info = ::Resque.info
+            info[:scheduled] = ActiveAdmin::Jobs::ScheduledJob.all.count if supports?(:scheduled_jobs)
             redis_info = redis.info
             info.merge(
               redis_version: redis_info["redis_version"],

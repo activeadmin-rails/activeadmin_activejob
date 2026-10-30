@@ -32,6 +32,19 @@ module ResqueHelpers
     worker
   end
 
+  # Schedule a TestJob for each of +args+, at +at+ (one second apart).
+  def schedule_jobs(*args, at: 1.hour.from_now, queue: "default")
+    args.each_with_index { |arg, i| TestJob.set(wait_until: at + i, queue:).perform_later(arg) }
+  end
+
+  def scheduled_arguments
+    Resque.redis.zrange("delayed_queue_schedule", 0, -1).flat_map do |timestamp|
+      Resque.redis.lrange("delayed:#{timestamp}", 0, -1).map do |json|
+        Resque.decode(json).dig("args", 0, "arguments", 0)
+      end
+    end
+  end
+
   def failed_entries
     Resque.redis.lrange("failed", 0, -1).map { |json| Resque.decode(json) }
   end
