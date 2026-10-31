@@ -14,6 +14,7 @@ AllCops:
     - "gemfiles/vendor/**/*"
     - "vendor/**/*"
     - "tmp/**/*"
+    - "activeadmin-rails/**/*" # checked out by CI
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

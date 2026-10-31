@@ -1,0 +1,82 @@
+name: Ruby
+
+on:
+  push:
+
+  pull_request:
+
+env:
+  RAILS_ENV: test
+  REDIS_URL: redis://localhost:6379/15
+  ACTIVEADMIN_RAILS_PATH: ${{ github.workspace }}/activeadmin-rails
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Ruby ${{ matrix.ruby }} / ${{ matrix.asset_pipeline }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - '3.2'
+          - '3.4.4'
+        asset_pipeline:
+          - sprockets
+          - propshaft
+
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.asset_pipeline }}.gemfile
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Until non-ActiveRecord resource support is released, build against its branch.
+      - uses: actions/checkout@v4
+        with:
+          repository: activeadmin-rails/activeadmin-rails
+          ref: feature/non-ar-resources
+          path: activeadmin-rails
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Build Propshaft assets
+        if: matrix.asset_pipeline == 'propshaft'
+        run: bundle exec rails dartsass:build
+        working-directory: spec/dummy
+      - name: Run the default task
+        run: bundle exec rake
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: activeadmin-rails/activeadmin-rails
+          ref: feature/non-ar-resources
+          path: activeadmin-rails
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4.4'
+          bundler-cache: true
+      - name: Rubocop
+        run: bundle exec rubocop
