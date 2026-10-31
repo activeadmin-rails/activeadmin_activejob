@@ -33,8 +33,10 @@ end
 Override `app/views/admin/failed_jobs/_index_as_table.html.arb` or `_show.html.arb`
 to customise the pages.
 
-Retrying requeues the job's original Resque payload (no ActiveJob callbacks run)
-and removes the failure. "Retry All" retries every failed job, oldest first,
+Retrying requeues the job's original Resque payload (no ActiveJob enqueue
+callbacks run) and removes the failure. ActiveJob execution counts are reset, so
+`retry_on` retries the job again if it fails; set `reset_executions = false` to
+keep them. "Retry All" retries every failed job, oldest first,
 skipping any marked retried by resque-web; "Clear Retried" and a Retried At column
 appear while such entries exist.
 
@@ -96,6 +98,7 @@ ActiveAdmin::Jobs.configure do |config|
   config.adapter_name = :resque  # defaults to config.active_job.queue_adapter
   config.scan_limit = 5_000      # max failures read for filters and stats
   config.remove_on_retry = true  # false: mark failed jobs retried instead (resque-web behaviour)
+  config.reset_executions = true # false: keep ActiveJob execution counts on retry
 end
 ```
 

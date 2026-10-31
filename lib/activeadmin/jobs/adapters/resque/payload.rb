@@ -49,6 +49,18 @@ module ActiveAdmin
             end
           end
 
+          # The payload to requeue on retry. With ActiveAdmin::Jobs.reset_executions,
+          # an ActiveJob job's execution counts are reset so that its retry_on
+          # handlers retry it again rather than counting earlier attempts.
+          def retry_payload(payload)
+            data = Array(payload["args"]).first
+            return payload unless ActiveAdmin::Jobs.reset_executions
+            return payload unless payload["class"] == JOB_WRAPPER && data.is_a?(Hash)
+
+            payload.merge("args" => [data.merge("executions" => 0, "exception_executions" => {}),
+                                     *payload["args"].drop(1)])
+          end
+
           # Resque writes times as local time strings, ActiveJob as ISO 8601.
           def parse_time(value)
             return if value.blank?

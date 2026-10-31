@@ -38,6 +38,10 @@ module ActiveAdmin
       # them retried as resque-web does.
       attr_accessor :remove_on_retry
 
+      # Reset ActiveJob execution counts when retrying failed jobs (default),
+      # so retry_on attempts start again.
+      attr_accessor :reset_executions
+
       # Parameter names masked in displayed job arguments. Defaults to
       # Rails.application.config.filter_parameters.
       attr_writer :filter_parameters
@@ -73,6 +77,7 @@ module ActiveAdmin
         @filter_parameters = nil
         self.scan_limit = 5_000
         self.remove_on_retry = true
+        self.reset_executions = true
       end
     end
 

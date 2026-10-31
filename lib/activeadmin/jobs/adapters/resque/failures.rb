@@ -52,7 +52,7 @@ module ActiveAdmin
             queue = entry["queue"]
             transact_failure(job) do |transaction, position|
               transaction.sadd(key("queues"), [queue])
-              transaction.rpush(key("queue:#{queue}"), ::Resque.encode(entry["payload"]))
+              transaction.rpush(key("queue:#{queue}"), ::Resque.encode(retry_payload(entry["payload"])))
               if ActiveAdmin::Jobs.remove_on_retry
                 remove_failure_at(transaction, position)
               else

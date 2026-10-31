@@ -31,6 +31,18 @@ RSpec.describe ActiveAdmin::Jobs::Adapters::Resque do
     Resque.redis.lset("failed", job.position, Resque.encode(entry))
   end
 
+  # Overwrite a failed job's ActiveJob data in place.
+  def set_executions(argument, counts)
+    job = job_with(argument)
+    entry = Resque.decode(job.raw)
+    entry["payload"]["args"][0].merge!(counts)
+    Resque.redis.lset("failed", job.position, Resque.encode(entry))
+  end
+
+  def queued_data
+    Resque.decode(Resque.redis.lindex("queue:default", 0)).dig("args", 0)
+  end
+
   it "is the adapter for the :resque queue adapter" do
     expect(adapter).to be_a described_class
   end
@@ -166,6 +178,22 @@ RSpec.describe ActiveAdmin::Jobs::Adapters::Resque do
 
       expect(adapter.retry_job(job)).to be false
       expect(queued_arguments).to eq []
+    end
+
+    it "resets ActiveJob execution counts" do
+      set_executions("a", "executions" => 3, "exception_executions" => { "[ArgumentError]" => 3 })
+
+      adapter.retry_job(job_with("a"))
+      expect(queued_data).to include("executions" => 0, "exception_executions" => {}, "job_class" => "TestJob")
+      expect(queued_arguments).to eq ["a"]
+    end
+
+    it "keeps execution counts when configured" do
+      ActiveAdmin::Jobs.reset_executions = false
+      set_executions("a", "executions" => 3)
+
+      adapter.retry_job(job_with("a"))
+      expect(queued_data["executions"]).to eq 3
     end
 
     it "can be performed again" do
