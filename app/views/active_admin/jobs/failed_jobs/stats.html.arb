@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+stats = failure_stats
+periods = ActiveAdmin::Jobs::FailureStats::PERIODS
+total_label = I18n.t("active_admin.jobs.failed_jobs.total")
+
+if stats.truncated?
+  limit = number_with_delimiter(ActiveAdmin::Jobs.scan_limit)
+  para I18n.t("active_admin.jobs.failed_jobs.stats_truncated", limit:), class: "jobs-truncated"
+end
+
+{ job_class: stats.by_class, exception_class: stats.by_exception }.each do |attribute, rows|
+  heading = ActiveAdmin::Jobs::FailedJob.human_attribute_name(attribute)
+  panel heading do
+    count_link = lambda do |row, count, newer_than = nil|
+      filter = { attribute => row.name, newer_than: }.compact
+      link_to count, collection_path(filter.empty? ? {} : { filter: })
+    end
+
+    table_for rows + [stats.total], class: "failure-stats" do
+      column(heading) { |row| row.name || total_label }
+      column(I18n.t("active_admin.jobs.failed_jobs.failed")) { |row| count_link.call(row, row.total) }
+      periods.each do |hours|
+        column(I18n.t("active_admin.jobs.failed_jobs.within", age: ActiveAdmin::Jobs::Config.age_label(hours))) do |row|
+          count_link.call(row, row.counts[hours], hours)
+        end
+      end
+    end
+  end
+end

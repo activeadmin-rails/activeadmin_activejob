@@ -58,6 +58,13 @@ en:
       enqueued:
         one: 1 job enqueued.
         other: "%{count} jobs enqueued."
+      hours:
+        one: 1 hour
+        other: "%{count} hours"
+      days:
+        one: 1 day
+        other: "%{count} days"
+      truncated_confirmation: "Only the newest %{limit} failures were searched; all matching failures will be affected."
       failed_jobs:
         job: Job
         retry_all: Retry All
@@ -72,6 +79,18 @@ en:
           other: Remove all %{count} failed jobs?
         batch_retry_confirmation: Retry the selected jobs?
         batch_discard_confirmation: Remove the selected jobs?
+        filters:
+          newer_than: Newer Than
+          older_than: Older Than
+          pattern: Matching
+          pattern_hint: Regular expression
+        invalid_pattern: "Invalid pattern: %{error}"
+        truncated: "Filtered within the newest %{limit} failures only."
+        stats: Failure Stats
+        stats_truncated: "Counts cover the newest %{limit} failures only."
+        failed: Failed
+        within: "Last %{age}"
+        total: Total
       queued_jobs:
         title: "Queued Jobs: %{queue}"
         batch_discard_confirmation: Remove the selected jobs from the queue?

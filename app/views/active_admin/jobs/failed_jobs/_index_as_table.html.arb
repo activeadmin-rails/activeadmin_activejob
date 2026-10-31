@@ -12,7 +12,8 @@ index_table_for(collection, default_table_options) do
   end
   actions do |job|
     if authorized?(:retry, job)
-      item I18n.t("active_admin.jobs.retry"), url_for(action: :retry, id: job.id), method: :post, class: "member_link"
+      item I18n.t("active_admin.jobs.retry"), url_for(action: :retry, id: job.to_param, **jobs_filter_query),
+           method: :post, class: "member_link"
     end
   end
 end

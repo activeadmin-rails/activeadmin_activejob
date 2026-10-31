@@ -8,6 +8,8 @@ module ActiveAdmin
       extend ActiveSupport::Concern
 
       included do
+        helper_method :jobs_filter_query, :jobs_truncated?
+
         rescue_from JobNotFound do
           redirect_to jobs_collection_path, alert: I18n.t("active_admin.jobs.not_found")
         end
@@ -32,9 +34,21 @@ module ActiveAdmin
         scoped_collection.find(Param.decode(params[:id]))
       end
 
-      # The index to return to after an action.
+      # The index to return to after an action, keeping any filters.
       def jobs_collection_path
-        collection_path
+        collection_path(**jobs_filter_query)
+      end
+
+      # Query parameters selecting the current filters, if any.
+      def jobs_filter_query
+        {}
+      end
+
+      # Whether the filtered collection stopped at ActiveAdmin::Jobs.scan_limit.
+      def jobs_truncated?
+        return @jobs_truncated if defined?(@jobs_truncated)
+
+        @jobs_truncated = scoped_collection.truncated?
       end
 
       def batch_action_discard(ids, _inputs)

@@ -42,6 +42,18 @@ With `remove_on_retry = false`, retrying instead marks the failure retried, as
 resque-web does, and "Retry All" retries every entry, including those already
 retried.
 
+A Filters sidebar narrows the list by job class, exception, queue, age ("Newer
+Than" / "Older Than") and a regular expression matched against the failure entry
+(with filtered parameters masked; each match times out after a second). "Retry
+All", "Clear All" and "Clear Retried" then act on the matching jobs only.
+"Failure Stats" counts failures by job class and by exception over the last hour,
+3 hours, day, 3 days and week, linking each count to the filtered list, as
+resque-cleaner does.
+
+Filtering and stats read at most `scan_limit` failures, newest first, and the page
+says so when there are more. Bulk actions on a filtered list still act on every
+matching failure.
+
 Authorization subjects are the resource classes (e.g. `ActiveAdmin::Jobs::FailedJob`).
 Besides the standard actions, retrying is authorized as `:retry`; removing is
 `ActiveAdmin::Auth::DESTROY`.
@@ -82,7 +94,7 @@ Queue names and worker ids may contain dots; they are percent-encoded in URLs.
 # config/initializers/active_admin_jobs.rb
 ActiveAdmin::Jobs.configure do |config|
   config.adapter_name = :resque  # defaults to config.active_job.queue_adapter
-  config.scan_limit = 5_000      # max entries read for in-memory filters
+  config.scan_limit = 5_000      # max failures read for filters and stats
   config.remove_on_retry = true  # false: mark failed jobs retried instead (resque-web behaviour)
 end
 ```

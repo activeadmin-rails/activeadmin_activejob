@@ -1,0 +1,23 @@
+<% ages = ActiveAdmin::Jobs::Config::FAILURE_AGES.map { |hours| [ActiveAdmin::Jobs::Config.age_label(hours), hours] } %>
+<%= form_with url: collection_path, method: :get, scope: :filter, local: true, class: "filter_form job_filters" do |f| %>
+  <% %i[job_class exception_class queue_name].each do |name| %>
+    <div class="filter_form_field filter_string">
+      <%= f.label name, ActiveAdmin::Jobs::FailedJob.human_attribute_name(name), class: "label" %>
+      <%= f.text_field name, value: filter_params[name.to_s] %>
+    </div>
+  <% end %>
+  <% %i[newer_than older_than].each do |name| %>
+    <div class="filter_form_field filter_select">
+      <%= f.label name, t("active_admin.jobs.failed_jobs.filters.#{name}"), class: "label" %>
+      <%= f.select name, options_for_select(ages, filter_params[name.to_s]&.to_i), include_blank: true %>
+    </div>
+  <% end %>
+  <div class="filter_form_field filter_string">
+    <%= f.label :pattern, t("active_admin.jobs.failed_jobs.filters.pattern"), class: "label" %>
+    <%= f.text_field :pattern, value: filter_params["pattern"], placeholder: t("active_admin.jobs.failed_jobs.filters.pattern_hint") %>
+  </div>
+  <div class="buttons">
+    <%= f.submit t("active_admin.filters.buttons.filter"), name: nil %>
+    <%= link_to t("active_admin.filters.buttons.clear"), collection_path, class: "clear_filters_btn" %>
+  </div>
+<% end %>
