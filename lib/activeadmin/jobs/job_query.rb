@@ -64,6 +64,12 @@ module ActiveAdmin
         @to_a ||= adapter.fetch_jobs(self)
       end
 
+      # Whether filtering stopped at ActiveAdmin::Jobs.scan_limit entries, so
+      # matching jobs beyond it are missing from #count and the results.
+      def truncated?
+        adapter.truncated?(self)
+      end
+
       def find(id)
         adapter.find_job(id.to_s, self) or raise JobNotFound, "#{record_class.model_name.human} #{id} not found"
       end

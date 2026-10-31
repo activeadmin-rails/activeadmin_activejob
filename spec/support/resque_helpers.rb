@@ -19,6 +19,20 @@ module ResqueHelpers
     end
   end
 
+  # Record a failed ActiveJob job directly, as Resque::Failure::Redis would.
+  def push_failure(argument, job_class: "TestJob", exception: "ArgumentError", failed_at: Time.current,
+                   queue: "default")
+    job = { "job_class" => job_class, "job_id" => SecureRandom.uuid, "queue_name" => queue,
+            "arguments" => [argument], "executions" => 0 }
+    entry = {
+      "failed_at" => failed_at.strftime("%Y/%m/%d %H:%M:%S %Z"),
+      "payload" => { "class" => ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper.name, "args" => [job] },
+      "exception" => exception, "error" => "#{exception} raised", "backtrace" => ["app/jobs/test_job.rb:8"],
+      "worker" => "host:1:#{queue}", "queue" => queue
+    }
+    Resque.redis.rpush("failed", Resque.encode(entry))
+  end
+
   # Enqueue a TestJob on +queue+ for each of +args+.
   def enqueue_jobs(*args, queue: "default")
     args.each { |arg| TestJob.set(queue:).perform_later(arg) }

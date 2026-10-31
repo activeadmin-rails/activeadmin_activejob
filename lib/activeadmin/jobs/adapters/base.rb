@@ -59,6 +59,11 @@ module ActiveAdmin
           not_implemented :discard_all
         end
 
+        # Whether the query's results were cut short by ActiveAdmin::Jobs.scan_limit.
+        def truncated?(_query)
+          false
+        end
+
         # Optional features
 
         def enqueue_now(_job)

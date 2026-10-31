@@ -24,7 +24,7 @@ module ActiveAdmin
 
         def supports?(feature)
           case feature
-          when :workers then true
+          when :workers, :failure_stats then true
           when :scheduled_jobs then scheduler?
           else false
           end
@@ -86,6 +86,10 @@ module ActiveAdmin
           when :scheduled then discard_all_scheduled(query)
           else unsupported_status(query)
           end
+        end
+
+        def truncated?(query)
+          query.status == :failed && failures_truncated?(query)
         end
 
         def enqueue_now(job)

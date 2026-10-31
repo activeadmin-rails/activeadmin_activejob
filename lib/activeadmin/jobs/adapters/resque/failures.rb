@@ -176,13 +176,15 @@ module ActiveAdmin
             transaction.lrem(failed_key, 1, REMOVED)
           end
 
+          # Unfiltered queries read the list directly; filtered ones scan at
+          # most ActiveAdmin::Jobs.scan_limit entries.
+          def failures_truncated?(query)
+            limit = ActiveAdmin::Jobs.scan_limit
+            query.filters.any? && limit.present? && redis.llen(failed_key) > limit
+          end
+
           def matches?(job, filters)
-            filters.all? do |name, value|
-              case name
-              when :retried then job.retried? == value
-              else raise ArgumentError, "Unsupported failed job filter: #{name.inspect}"
-              end
-            end
+            FailureFilter.match?(job, filters)
           end
 
           def build_failure(json, position)
