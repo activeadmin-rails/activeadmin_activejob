@@ -14,15 +14,15 @@ RSpec.describe "Jobs overview" do
 
     expect(response).to have_http_status(:ok)
     expect(page).to have_link "mail.high", href: "/admin/queued_jobs?queue=mail.high"
-    expect(page).to have_link "1 failed job", href: "/admin/failed_jobs"
+    expect(page).to have_css "table.job-stats tr", text: /Failed\s+1/
     expect(page).to have_css ".panel h3", text: "1 Worker Working"
     expect(page).to have_css "table.job-stats td", text: "Redis version"
   end
 
-  it "links to scheduled jobs" do
+  it "counts scheduled jobs in the statistics" do
     schedule_jobs("s")
     get "/admin/jobs"
 
-    expect(page).to have_link "1 scheduled job", href: "/admin/scheduled_jobs"
+    expect(page).to have_css "table.job-stats tr", text: /Scheduled\s+1/
   end
 end

@@ -85,8 +85,8 @@ Register the other screens the same way, each with a controller subclass:
   Enqueuing now is authorized as `:enqueue_now`.
 - **Queues** lists queue sizes. "Clear" removes a queue and its jobs, as resque-web does.
 - **Workers** lists registered workers, working first, with their current jobs (read only).
-- **Jobs** (overview page) shows queue sizes, failed and scheduled job counts, working
-  workers and Resque/Redis statistics, linking to the screens that are registered.
+- **Jobs** (overview page) shows queue sizes (linking to their jobs), working workers
+  and Resque/Redis statistics, including failed and scheduled job counts.
 
 Queue names and worker ids may contain dots; they are percent-encoded in URLs.
 

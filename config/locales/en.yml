@@ -122,9 +122,3 @@ en:
           one: 1 Worker Working
           other: "%{count} Workers Working"
         stats: Statistics
-        failed_count:
-          one: 1 failed job
-          other: "%{count} failed jobs"
-        scheduled_count:
-          one: 1 scheduled job
-          other: "%{count} scheduled jobs"
