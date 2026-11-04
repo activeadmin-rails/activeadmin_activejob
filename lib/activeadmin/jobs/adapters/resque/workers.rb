@@ -21,6 +21,10 @@ module ActiveAdmin
             end
           end
 
+          def counts
+            ::Resque.info.slice(:pending, :failed, :workers)
+          end
+
           def stats
             info = ::Resque.info
             info[:scheduled] = ActiveAdmin::Jobs::ScheduledJob.all.count if supports?(:scheduled_jobs)

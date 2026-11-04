@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+tabs = ActiveAdmin::Jobs::Tabs.for(self)
+if tabs.size > 1
+  # Inline style: the gem has no stylesheet; aligns with the page content.
+  div id: "jobs_tabs", class: "table_tools",
+      style: "padding: 16px var(--horizontal-page-margin, 30px) 0; margin-bottom: 0" do
+    ul class: "table_tools_segmented_control" do
+      tabs.each do |tab|
+        li class: ["scope", tab.id, ("selected" if tab.current)].compact.join(" ") do
+          a href: tab.path, class: "table_tools_button" do
+            text_node tab.label
+            span "(#{tab.badge})", class: "count" if tab.badge
+          end
+        end
+      end
+    end
+  end
+end

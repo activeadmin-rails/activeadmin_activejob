@@ -2,4 +2,5 @@
 
 ActiveAdmin.configure_resource ActiveAdmin::Jobs::Worker, as: "Worker" do |config|
   ActiveAdmin::Jobs::Config.workers(config)
+  config.menu_item_options = false # reached through the jobs tabs
 end

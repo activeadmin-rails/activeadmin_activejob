@@ -26,7 +26,7 @@ end
 # app/admin/failed_jobs.rb
 ActiveAdmin.configure_resource ActiveAdmin::Jobs::FailedJob, as: "FailedJob" do |config|
   ActiveAdmin::Jobs::Config.failed_jobs(config)
-  # config.menu_item_options = { parent: "Jobs" }
+  config.menu_item_options = false # reached through the jobs tabs (see Navigation)
 end
 ```
 
@@ -89,6 +89,19 @@ Register the other screens the same way, each with a controller subclass:
   workers and Resque/Redis statistics, linking to the screens that are registered.
 
 Queue names and worker ids may contain dots; they are percent-encoded in URLs.
+
+### Navigation
+
+Every jobs screen shows a row of tabs below its title, as resque-web does:
+Overview, Queues, Workers, Failed Jobs, Failure Stats and Scheduled Jobs, with
+pending, worker and failed counts. A tab appears only for screens you have
+registered and the user may read (`ActiveAdmin::Auth::READ`).
+
+So one menu entry is enough: put the Jobs overview page in the menu (e.g.
+`config.menu_item_options = { parent: "Setup" }`) and hide the other screens with
+`config.menu_item_options = false`.
+
+Override `app/views/active_admin/jobs/navigation/_tabs.html.arb` to change the tabs.
 
 ## Configuration
 

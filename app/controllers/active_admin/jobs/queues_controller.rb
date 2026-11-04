@@ -4,6 +4,7 @@ module ActiveAdmin
   module Jobs
     # Base controller for queues: sizes, and removing a queue with its jobs.
     class QueuesController < ActiveAdmin::ResourceController
+      include Tabbed
       include ArrayCollection
 
       actions :index, :destroy

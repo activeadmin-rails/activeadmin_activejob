@@ -12,6 +12,7 @@ module ActiveAdmin
     # The index is filtered by the +filter+ parameters (see FILTERS). Filtering
     # reads at most ActiveAdmin::Jobs.scan_limit failures, newest first.
     class FailedJobsController < ActiveAdmin::ResourceController
+      include Tabbed
       include JobActions
 
       FILTERS = %w[job_class exception_class queue_name newer_than older_than pattern].freeze

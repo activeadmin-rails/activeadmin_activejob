@@ -1,0 +1,4 @@
+# frozen_string_literal: true
+
+render partial: "active_admin/base/title_bar", locals: { page_title: }
+render partial: "active_admin/jobs/navigation/tabs"

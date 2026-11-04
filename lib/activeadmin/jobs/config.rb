@@ -114,12 +114,6 @@ module ActiveAdmin
           end
         end
 
-        config.add_action_item :stats, only: :index do
-          if ActiveAdmin::Jobs.adapter.supports?(:failure_stats)
-            link_to I18n.t("active_admin.jobs.failed_jobs.stats"), url_for(action: :stats)
-          end
-        end
-
         collection_action_item(config, :retry_all, :post, :retry)
         collection_action_item(config, :clear_retried, :delete, ActiveAdmin::Auth::DESTROY,
                                visible: proc { ActiveAdmin::Jobs::Config.show_retried?(collection) })

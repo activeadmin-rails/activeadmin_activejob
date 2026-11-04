@@ -5,6 +5,7 @@ module ActiveAdmin
     # Base controller for the jobs waiting in a queue, selected with the
     # +queue+ parameter (defaulting to the first queue).
     class QueuedJobsController < ActiveAdmin::ResourceController
+      include Tabbed
       include JobActions
 
       actions :index, :show, :destroy

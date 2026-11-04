@@ -4,6 +4,7 @@ module ActiveAdmin
   module Jobs
     # Base controller for workers (read only), working workers first.
     class WorkersController < ActiveAdmin::ResourceController
+      include Tabbed
       include ArrayCollection
 
       actions :index, :show

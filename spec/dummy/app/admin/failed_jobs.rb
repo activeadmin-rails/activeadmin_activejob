@@ -2,4 +2,5 @@
 
 ActiveAdmin.configure_resource ActiveAdmin::Jobs::FailedJob, as: "FailedJob" do |config|
   ActiveAdmin::Jobs::Config.failed_jobs(config)
+  config.menu_item_options = false # reached through the jobs tabs
 end

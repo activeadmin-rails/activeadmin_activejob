@@ -2,4 +2,5 @@
 
 ActiveAdmin.configure_resource ActiveAdmin::Jobs::ScheduledJob, as: "ScheduledJob" do |config|
   ActiveAdmin::Jobs::Config.scheduled_jobs(config)
+  config.menu_item_options = false # reached through the jobs tabs
 end

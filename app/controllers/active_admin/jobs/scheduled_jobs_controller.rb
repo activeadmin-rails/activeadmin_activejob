@@ -4,6 +4,7 @@ module ActiveAdmin
   module Jobs
     # Base controller for scheduled jobs (resque-scheduler's delayed jobs).
     class ScheduledJobsController < ActiveAdmin::ResourceController
+      include Tabbed
       include JobActions
 
       actions :index, :show, :destroy

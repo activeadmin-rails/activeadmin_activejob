@@ -114,6 +114,8 @@ en:
         worker: Worker
         current_job: Current Job
         not_found: The worker is no longer present.
+      tabs:
+        overview: Overview
       overview:
         queues: Queues
         working:
