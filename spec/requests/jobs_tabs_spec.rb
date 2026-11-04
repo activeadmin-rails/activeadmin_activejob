@@ -18,15 +18,14 @@ RSpec.describe "Jobs tabs" do
     enqueue_jobs("b", "c")
     get "/admin/jobs"
 
-    expect(tabs).to eq ["Overview", "Queues (2)", "Workers (0)", "Failed Jobs (1)", "Failure Stats", "Scheduled Jobs"]
+    expect(tabs).to eq ["Overview", "Workers (0)", "Failed Jobs (1)", "Failure Stats", "Scheduled Jobs"]
     expect(page).to have_link "Failure Stats", href: "/admin/failed_jobs/stats"
     expect(page).to have_link "Overview", href: "/admin/jobs"
   end
 
   {
     "/admin/jobs" => "Overview",
-    "/admin/queues" => "Queues (0)",
-    "/admin/queued_jobs" => "Queues (0)",
+    "/admin/queued_jobs" => "Overview",
     "/admin/workers" => "Workers (0)",
     "/admin/failed_jobs" => "Failed Jobs (0)",
     "/admin/failed_jobs/stats" => "Failure Stats",

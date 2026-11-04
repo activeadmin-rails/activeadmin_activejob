@@ -23,7 +23,6 @@ module ActiveAdmin
         counts = @adapter.counts
         [
           overview_tab,
-          resource_tab(Queue, counts[:pending], also: QueuedJob),
           resource_tab(Worker, counts[:workers]),
           resource_tab(FailedJob, counts[:failed], except: "stats"),
           (stats_tab if @adapter.supports?(:failure_stats)),
@@ -33,22 +32,21 @@ module ActiveAdmin
 
       private
 
+      # Current on queued jobs too, which are reached from the overview's queues.
       def overview_tab
-        page = @namespace.resources.detect do |config|
-          config.is_a?(ActiveAdmin::Page) && config.controller <= OverviewController
-        end
+        page = Config.overview_page(@namespace)
         return unless page && @view.authorized?(ActiveAdmin::Auth::READ, page)
 
+        queued = @namespace.resource_for(QueuedJob)
         Tab.new(id: "overview", label: I18n.t("active_admin.jobs.tabs.overview"),
-                path: page.route_collection_path, current: current?(page))
+                path: page.route_collection_path, current: [page, queued].compact.any? { |c| current?(c) })
       end
 
-      def resource_tab(record_class, badge = nil, also: nil, except: nil)
+      def resource_tab(record_class, badge = nil, except: nil)
         config = readable(record_class) or return
-        child = @namespace.resource_for(also) if also
         Tab.new(id: config.resource_name.route_key, label: config.plural_resource_label,
                 path: config.route_collection_path, badge:,
-                current: [config, child].compact.any? { |c| current?(c) } && @view.action_name != except)
+                current: current?(config) && @view.action_name != except)
       end
 
       def stats_tab

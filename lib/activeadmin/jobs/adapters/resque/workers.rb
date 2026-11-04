@@ -22,7 +22,7 @@ module ActiveAdmin
           end
 
           def counts
-            ::Resque.info.slice(:pending, :failed, :workers)
+            ::Resque.info.slice(:failed, :workers)
           end
 
           # Figures not shown by the jobs tabs or overview panels.

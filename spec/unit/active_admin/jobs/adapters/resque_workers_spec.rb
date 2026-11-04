@@ -43,12 +43,11 @@ RSpec.describe ActiveAdmin::Jobs::Adapters::Resque do
   end
 
   describe "#counts" do
-    it "counts pending and failed jobs and workers" do
+    it "counts failed jobs and workers" do
       fail_jobs("b")
-      enqueue_jobs("a")
       register_worker("default")
 
-      expect(adapter.counts).to eq(pending: 1, failed: 1, workers: 1)
+      expect(adapter.counts).to eq(failed: 1, workers: 1)
     end
   end
 end

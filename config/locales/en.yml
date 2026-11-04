@@ -10,9 +10,6 @@ en:
       active_admin/jobs/scheduled_job:
         one: Scheduled Job
         other: Scheduled Jobs
-      active_admin/jobs/queue:
-        one: Queue
-        other: Queues
       active_admin/jobs/worker:
         one: Worker
         other: Workers
@@ -94,6 +91,14 @@ en:
       queued_jobs:
         title: "Queued Jobs: %{queue}"
         batch_discard_confirmation: Remove the selected jobs from the queue?
+        clear: Clear Queue
+        clear_confirmation:
+          one: Remove queue %{queue} and its 1 job?
+          other: Remove queue %{queue} and its %{count} jobs?
+        cleared:
+          one: Queue %{queue} removed with 1 job.
+          other: Queue %{queue} removed with %{count} jobs.
+        queue_not_found: The queue is no longer present.
       scheduled_jobs:
         clear_all: Clear All
         clear_all_confirmation:
@@ -101,15 +106,6 @@ en:
           other: Remove all %{count} scheduled jobs?
         batch_enqueue_confirmation: Enqueue the selected jobs now?
         batch_discard_confirmation: Remove the selected scheduled jobs?
-      queues:
-        clear: Clear
-        clear_confirmation:
-          one: Remove queue %{queue} and its 1 job?
-          other: Remove queue %{queue} and its %{count} jobs?
-        cleared:
-          one: Queue %{queue} removed with 1 job.
-          other: Queue %{queue} removed with %{count} jobs.
-        not_found: The queue is no longer present.
       workers:
         worker: Worker
         current_job: Current Job

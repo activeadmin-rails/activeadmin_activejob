@@ -44,6 +44,37 @@ RSpec.describe "Queued Jobs" do
     end
   end
 
+  describe "clearing a queue" do
+    before do
+      enqueue_jobs("a", "b")
+      enqueue_jobs("c", queue: "mail.high")
+    end
+
+    it "offers Clear Queue for the current queue" do
+      get "/admin/queued_jobs", params: { queue: "mail.high" }
+
+      link = page.find_link("Clear Queue")
+      expect(link[:href]).to eq "/admin/queued_jobs/clear?queue=mail.high"
+      expect(link["data-confirm"]).to eq "Remove queue mail.high and its 1 job?"
+    end
+
+    it "removes the queue with its jobs and returns to the overview" do
+      delete "/admin/queued_jobs/clear", params: { queue: "mail.high" }
+
+      expect(response).to redirect_to "/admin/jobs"
+      expect(flash[:notice]).to eq "Queue mail.high removed with 1 job."
+      expect(Resque.queues).to eq ["default"]
+    end
+
+    it "reports a queue that is gone" do
+      delete "/admin/queued_jobs/clear", params: { queue: "missing" }
+
+      expect(response).to redirect_to "/admin/jobs"
+      expect(flash[:alert]).to eq "The queue is no longer present."
+      expect(Resque.queues).to contain_exactly("default", "mail.high")
+    end
+  end
+
   it "renders without queues" do
     get "/admin/queued_jobs"
 

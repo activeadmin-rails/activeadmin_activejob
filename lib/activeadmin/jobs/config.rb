@@ -11,15 +11,22 @@ module ActiveAdmin
     module Config
       module_function
 
-      # Path to the index of another job resource in +namespace+, or nil when
-      # the host application has not registered it.
-      def path_for(namespace, resource_class, params = {})
-        namespace.resource_for(resource_class)&.route_collection_path({}, params)
+      # The jobs overview page registered in +namespace+, if any.
+      def overview_page(namespace)
+        namespace.resources.detect do |config|
+          config.is_a?(ActiveAdmin::Page) && config.controller <= OverviewController
+        end
+      end
+
+      def overview_path(namespace)
+        overview_page(namespace)&.route_collection_path
       end
 
       def queued_jobs(config)
         read_only_jobs(config, title: proc { I18n.t("active_admin.jobs.queued_jobs.title", queue: current_queue) })
         config.add_sidebar_section "Queues", only: :index, partial: "queues_sidebar"
+        config.add_collection_route :clear, method: :delete
+        collection_action_item(config, :clear, :delete, ActiveAdmin::Auth::DESTROY)
         config.batch_actions = true
         config.remove_batch_action :destroy
         config.add_batch_action :discard, proc { I18n.t("active_admin.jobs.discard") },
@@ -53,11 +60,6 @@ module ActiveAdmin
                                 priority: 2,
                                 confirm: proc { I18n.t("active_admin.jobs.scheduled_jobs.batch_discard_confirmation") },
                                 if: proc { authorized?(ActiveAdmin::Auth::DESTROY, active_admin_config.resource_class) }
-      end
-
-      def queues(config)
-        read_only_jobs(config)
-        config.batch_actions = false
       end
 
       def workers(config)
@@ -152,7 +154,8 @@ module ActiveAdmin
       # stopped at the scan limit.
       def confirmation(view, name, count)
         scope = "active_admin.jobs.#{view.controller_name}"
-        confirm = I18n.t("#{name}_confirmation", scope:, count:)
+        # The filter query (e.g. +queue+) can be interpolated too.
+        confirm = I18n.t("#{name}_confirmation", scope:, count:, **view.jobs_filter_query)
         return confirm unless view.jobs_truncated?
 
         limit = ActiveSupport::NumberHelper.number_to_delimited(ActiveAdmin::Jobs.scan_limit)

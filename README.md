@@ -65,7 +65,7 @@ Job arguments are shown with `Rails.application.config.filter_parameters` masked
 Only Resque's Redis failure backend (alone or first in `Resque::Failure::Multiple`)
 is supported.
 
-### Queued Jobs, Scheduled Jobs, Queues, Workers and the Jobs overview
+### Queued Jobs, Scheduled Jobs, Workers and the Jobs overview
 
 Register the other screens the same way, each with a controller subclass:
 
@@ -73,19 +73,19 @@ Register the other screens the same way, each with a controller subclass:
 |---|---|---|
 | `configure_resource ActiveAdmin::Jobs::QueuedJob, as: "QueuedJob"` | `ActiveAdmin::Jobs::QueuedJobsController` | `Config.queued_jobs(config)` |
 | `configure_resource ActiveAdmin::Jobs::ScheduledJob, as: "ScheduledJob"` | `ActiveAdmin::Jobs::ScheduledJobsController` | `Config.scheduled_jobs(config)` |
-| `configure_resource ActiveAdmin::Jobs::Queue, as: "Queue"` | `ActiveAdmin::Jobs::QueuesController` | `Config.queues(config)` |
 | `configure_resource ActiveAdmin::Jobs::Worker, as: "Worker"` | `ActiveAdmin::Jobs::WorkersController` | `Config.workers(config)` |
 | `configure_page "Jobs"` | `ActiveAdmin::Jobs::OverviewController` | `Config.overview(config)` |
 
 - **Queued Jobs** lists one queue's jobs in the order they will run (`?queue=`,
   default the first queue), with a sidebar of queues. Jobs can be removed singly
-  or in batches.
+  or in batches; "Clear Queue" removes the queue and its jobs, as resque-web does
+  (authorized as `ActiveAdmin::Auth::DESTROY`).
 - **Scheduled Jobs** (needs resque-scheduler) lists delayed jobs soonest first,
   with "Enqueue Now" and remove per job and in batches, and "Clear All".
   Enqueuing now is authorized as `:enqueue_now`.
-- **Queues** lists queue sizes. "Clear" removes a queue and its jobs, as resque-web does.
 - **Workers** lists registered workers, working first, with their current jobs (read only).
-- **Jobs** (overview page) shows queue sizes (linking to their jobs), working workers
+- **Jobs** (overview page) shows queue sizes, linking to their jobs and with "Clear"
+  for each queue, working workers
   and Resque/Redis statistics (processed and scheduled job counts, Redis version,
   uptime, clients and memory).
 
@@ -94,8 +94,8 @@ Queue names and worker ids may contain dots; they are percent-encoded in URLs.
 ### Navigation
 
 Every jobs screen shows a row of tabs below its title, as resque-web does:
-Overview, Queues, Workers, Failed Jobs, Failure Stats and Scheduled Jobs, with
-pending, worker and failed counts. A tab appears only for screens you have
+Overview, Workers, Failed Jobs, Failure Stats and Scheduled Jobs, with worker and
+failed counts. Queued jobs are reached from the overview's queues. A tab appears only for screens you have
 registered and the user may read (`ActiveAdmin::Auth::READ`).
 
 So one menu entry is enough: put the Jobs overview page in the menu (e.g.

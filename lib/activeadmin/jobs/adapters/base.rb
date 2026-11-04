@@ -75,7 +75,7 @@ module ActiveAdmin
           not_implemented :workers
         end
 
-        # Counts for the jobs tabs: :pending, :failed and :workers, where known.
+        # Counts for the jobs tabs: :failed and :workers, where known.
         # @return [Hash]
         def counts
           {}

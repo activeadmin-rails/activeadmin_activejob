@@ -19,6 +19,15 @@ RSpec.describe "Jobs overview" do
     expect(page).to have_css "table.job-stats td", text: "Redis version"
   end
 
+  it "offers to clear each queue" do
+    enqueue_jobs("c", queue: "mail.high")
+    get "/admin/jobs"
+
+    link = page.find_link("Clear Queue", href: "/admin/queued_jobs/clear?queue=mail.high")
+    expect(link["data-method"]).to eq "delete"
+    expect(link["data-confirm"]).to eq "Remove queue mail.high and its 1 job?"
+  end
+
   it "puts working workers above statistics" do
     get "/admin/jobs"
 
