@@ -6,6 +6,7 @@ module ActiveAdmin
     # +queue+ parameter (defaulting to the first queue), and for clearing a queue.
     class QueuedJobsController < ActiveAdmin::ResourceController
       include Tabbed
+      include LivePoll
       include JobActions
 
       actions :index, :show, :destroy

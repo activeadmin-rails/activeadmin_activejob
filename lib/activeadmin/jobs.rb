@@ -43,6 +43,9 @@ module ActiveAdmin
       # so retry_on attempts start again.
       attr_accessor :reset_executions
 
+      # Seconds between refreshes while live polling (default 2).
+      attr_accessor :poll_interval
+
       # Parameter names masked in displayed job arguments. Defaults to
       # Rails.application.config.filter_parameters.
       attr_writer :filter_parameters
@@ -79,6 +82,7 @@ module ActiveAdmin
         self.scan_limit = 5_000
         self.remove_on_retry = true
         self.reset_executions = true
+        self.poll_interval = 2
       end
     end
 

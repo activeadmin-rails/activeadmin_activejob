@@ -2,3 +2,6 @@
 
 render partial: "active_admin/base/title_bar", locals: { page_title: }
 render partial: "active_admin/jobs/navigation/tabs"
+if controller.class.include?(ActiveAdmin::Jobs::LivePoll) && live_poll?
+  render partial: "active_admin/jobs/navigation/live_poll"
+end

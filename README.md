@@ -104,6 +104,23 @@ So one menu entry is enough: put the Jobs overview page in the menu (e.g.
 
 Override `app/views/active_admin/jobs/navigation/_tabs.html.arb` to change the tabs.
 
+The jobs screens render Active Admin's standard action items (Retry All, Clear
+All, Live Poll, …) even if the application overrides
+`active_admin/resource/_action_items` for its own resources. To change them for
+one screen, override e.g. `app/views/failed_jobs/_action_items.html.arb`.
+
+### Live poll
+
+The overview, Workers and Queued Jobs offer "Live Poll", as resque-web does: the
+page refreshes its table, sidebar and tabs every `poll_interval` seconds until
+"Stop Live Poll". Polling pauses while the browser tab is hidden, a job is
+selected or a field has focus. It also works with Turbo Drive, stopping when you
+leave the page.
+
+The gem registers its script and stylesheet (`active_admin_jobs.js`,
+`active_admin_jobs.css`) with Active Admin, and with Sprockets for precompiling;
+Propshaft serves them as they are.
+
 ## Configuration
 
 ```ruby
@@ -113,6 +130,7 @@ ActiveAdmin::Jobs.configure do |config|
   config.scan_limit = 5_000      # max failures read for filters and stats
   config.remove_on_retry = true  # false: mark failed jobs retried instead (resque-web behaviour)
   config.reset_executions = true # false: keep ActiveJob execution counts on retry
+  config.poll_interval = 2       # seconds between live poll refreshes
 end
 ```
 

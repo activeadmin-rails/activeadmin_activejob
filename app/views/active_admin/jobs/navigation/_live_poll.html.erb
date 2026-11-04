@@ -1,0 +1,2 @@
+<%# Starts live polling in active_admin_jobs.js. %>
+<div id="jobs_live_poll" data-interval="<%= (ActiveAdmin::Jobs.poll_interval.to_f * 1000).to_i %>" hidden></div>

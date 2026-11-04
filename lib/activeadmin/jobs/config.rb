@@ -26,6 +26,7 @@ module ActiveAdmin
         read_only_jobs(config, title: proc { I18n.t("active_admin.jobs.queued_jobs.title", queue: current_queue) })
         config.add_sidebar_section "Queues", only: :index, partial: "queues_sidebar"
         config.add_collection_route :clear, method: :delete
+        live_poll_action_item(config)
         collection_action_item(config, :clear, :delete, ActiveAdmin::Auth::DESTROY)
         config.batch_actions = true
         config.remove_batch_action :destroy
@@ -65,10 +66,24 @@ module ActiveAdmin
       def workers(config)
         read_only_jobs(config)
         config.batch_actions = false
+        live_poll_action_item(config)
       end
 
-      # The overview page needs no configuration yet; kept for symmetry.
-      def overview(_config); end
+      def overview(config)
+        live_poll_action_item(config)
+      end
+
+      # Toggles live polling (LivePoll) of the index.
+      def live_poll_action_item(config)
+        config.add_action_item :live_poll, only: :index do
+          query = request.query_parameters.symbolize_keys
+          if live_poll?
+            link_to I18n.t("active_admin.jobs.live_poll.stop"), url_for(query.except(:poll))
+          else
+            link_to I18n.t("active_admin.jobs.live_poll.start"), url_for(query.merge(poll: 1))
+          end
+        end
+      end
 
       # Index options are set once: the first index presenter is the default.
       def read_only_jobs(config, **index_options)

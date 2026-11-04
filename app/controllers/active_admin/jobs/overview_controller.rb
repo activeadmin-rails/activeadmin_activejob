@@ -6,6 +6,7 @@ module ActiveAdmin
     # and the jobs being worked on.
     class OverviewController < ActiveAdmin::PageController
       include Tabbed
+      include LivePoll
     end
   end
 end

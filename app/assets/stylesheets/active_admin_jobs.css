@@ -1,0 +1,5 @@
+/* activeadmin_activejob: the jobs tabs, aligned with the page content. */
+#jobs_tabs {
+  padding: 16px var(--horizontal-page-margin, 30px) 0;
+  margin-bottom: 0;
+}

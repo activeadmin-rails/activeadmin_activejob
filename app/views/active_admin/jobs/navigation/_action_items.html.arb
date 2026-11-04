@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+# Active Admin's own action items (as active_admin/base/_action_items), so the
+# jobs screens show theirs even when the application overrides
+# active_admin/resource/_action_items for its own resources. Override per
+# screen with e.g. app/views/failed_jobs/_action_items.html.arb.
+div(class: :action_items) do
+  action_items.each do |action_item|
+    span class: action_item.html_class do
+      instance_exec(&action_item.block)
+    end
+  end
+end

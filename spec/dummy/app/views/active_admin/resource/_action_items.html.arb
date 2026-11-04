@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+# Like a host application that renders only its own CRUD action items for
+# resources: the jobs screens must still show theirs.
+div(class: :action_items) do
+  action_link :new_model, new_resource_path if params[:action] == "index" && controller.action_methods.include?("new")
+end

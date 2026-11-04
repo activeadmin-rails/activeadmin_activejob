@@ -112,6 +112,9 @@ en:
         not_found: The worker is no longer present.
       tabs:
         overview: Overview
+      live_poll:
+        start: Live Poll
+        stop: Stop Live Poll
       overview:
         queues: Queues
         working:
