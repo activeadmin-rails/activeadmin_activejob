@@ -19,6 +19,13 @@ RSpec.describe "Jobs overview" do
     expect(page).to have_css "table.job-stats td", text: "Redis version"
   end
 
+  it "puts working workers above statistics" do
+    get "/admin/jobs"
+
+    titles = page.all(".column").map { |column| column.all(".panel h3").map(&:text) }
+    expect(titles).to eq [["Queues"], ["0 Workers Working", "Resque & Redis"]]
+  end
+
   it "counts scheduled jobs in the statistics" do
     schedule_jobs("s")
     get "/admin/jobs"
