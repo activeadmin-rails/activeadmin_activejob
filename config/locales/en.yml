@@ -117,6 +117,8 @@ en:
         stop: Stop Live Poll
       overview:
         queues: Queues
+        hide_empty: Hide Empty Queues
+        show_empty: Show Empty Queues
         working:
           one: 1 Worker Working
           other: "%{count} Workers Working"

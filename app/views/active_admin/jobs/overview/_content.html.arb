@@ -5,11 +5,22 @@ adapter = ActiveAdmin::Jobs.adapter
 stats = adapter.stats
 queued = namespace.resource_for(ActiveAdmin::Jobs::QueuedJob)
 clear = queued && authorized?(ActiveAdmin::Auth::DESTROY, ActiveAdmin::Jobs::QueuedJob)
+query = request.query_parameters.symbolize_keys
+hide_empty = params[:hide_empty].present?
+queues = adapter.queues
+queues = queues.select { |queue| queue.size.positive? } if hide_empty
 
 columns do
   column do
     panel I18n.t("active_admin.jobs.overview.queues") do
-      table_for adapter.queues do
+      header_action(
+        if hide_empty
+          link_to I18n.t("active_admin.jobs.overview.show_empty"), url_for(query.except(:hide_empty))
+        else
+          link_to I18n.t("active_admin.jobs.overview.hide_empty"), url_for(query.merge(hide_empty: 1))
+        end
+      )
+      table_for queues do
         column(:name) do |queue|
           queued ? link_to(queue.name, queued.route_collection_path({}, queue: queue.name)) : queue.name
         end
@@ -18,7 +29,8 @@ columns do
           column("") do |queue|
             confirm = I18n.t("active_admin.jobs.queued_jobs.clear_confirmation", queue: queue.name, count: queue.size)
             link_to I18n.t("active_admin.jobs.queued_jobs.clear"),
-                    url_for(controller: "/#{queued.controller.controller_path}", action: :clear, queue: queue.name),
+                    url_for(controller: "/#{queued.controller.controller_path}", action: :clear, queue: queue.name,
+                            **query.slice(*ActiveAdmin::Jobs::QueuedJobsController::OVERVIEW_PARAMS)),
                     method: :delete, data: { confirm: }, class: "member_link"
           end
         end

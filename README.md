@@ -85,7 +85,7 @@ Register the other screens the same way, each with a controller subclass:
   Enqueuing now is authorized as `:enqueue_now`.
 - **Workers** lists registered workers, working first, with their current jobs (read only).
 - **Jobs** (overview page) shows queue sizes, linking to their jobs and with "Clear"
-  for each queue, working workers
+  for each queue ("Hide Empty Queues" toggles queues without jobs), working workers
   and Resque/Redis statistics (processed and scheduled job counts, Redis version,
   uptime, clients and memory).
 

@@ -66,6 +66,12 @@ RSpec.describe "Queued Jobs" do
       expect(Resque.queues).to eq ["default"]
     end
 
+    it "returns to the overview as it was shown" do
+      delete "/admin/queued_jobs/clear", params: { queue: "mail.high", hide_empty: 1, poll: 1, other: 1 }
+
+      expect(response).to redirect_to "/admin/jobs?hide_empty=1&poll=1"
+    end
+
     it "reports a queue that is gone" do
       delete "/admin/queued_jobs/clear", params: { queue: "missing" }
 

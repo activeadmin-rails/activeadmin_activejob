@@ -28,11 +28,31 @@ RSpec.describe "Jobs overview" do
     expect(link["data-confirm"]).to eq "Remove queue mail.high and its 1 job?"
   end
 
+  it "offers to hide empty queues" do
+    Resque.watch_queue("empty")
+    get "/admin/jobs"
+
+    expect(page).to have_link "empty"
+    expect(page).to have_link "Hide Empty Queues", href: "/admin/jobs?hide_empty=1"
+  end
+
+  it "hides empty queues, keeping live poll" do
+    enqueue_jobs("c", queue: "mail.high")
+    Resque.watch_queue("empty")
+    get "/admin/jobs", params: { hide_empty: 1, poll: 1 }
+
+    expect(page).to have_link "mail.high"
+    expect(page).to have_no_link "empty", exact: true
+    expect(page).to have_link "Show Empty Queues", href: "/admin/jobs?poll=1"
+    expect(page).to have_link "Stop Live Poll", href: "/admin/jobs?hide_empty=1"
+    expect(page).to have_link "Clear Queue", href: "/admin/queued_jobs/clear?hide_empty=1&poll=1&queue=mail.high"
+  end
+
   it "puts working workers above statistics" do
     get "/admin/jobs"
 
-    titles = page.all(".column").map { |column| column.all(".panel h3").map(&:text) }
-    expect(titles).to eq [["Queues"], ["0 Workers Working", "Resque & Redis"]]
+    titles = page.all(".column").map { |column| column.all(".panel h3").map { |h3| h3.text.squish } }
+    expect(titles).to match [[a_string_starting_with("Queues")], ["0 Workers Working", "Resque & Redis"]]
   end
 
   it "counts scheduled jobs in the statistics" do

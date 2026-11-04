@@ -11,14 +11,17 @@ module ActiveAdmin
 
       actions :index, :show, :destroy
 
+      # Overview parameters kept when returning there after clearing a queue.
+      OVERVIEW_PARAMS = %i[hide_empty poll].freeze
+
       helper_method :current_queue, :queues
 
       # Removes the queue and its jobs, as resque-web does, returning to the
-      # jobs overview when it is registered.
+      # jobs overview (keeping its OVERVIEW_PARAMS) when it is registered.
       def clear
         authorize! ActiveAdmin::Auth::DESTROY, resource_class
         name = params[:queue]
-        path = Config.overview_path(active_admin_namespace) || collection_path
+        path = clear_return_path
         unless queues.any? { |queue| queue.name == name }
           return redirect_to path, alert: I18n.t("active_admin.jobs.queued_jobs.queue_not_found")
         end
@@ -54,6 +57,13 @@ module ActiveAdmin
       end
 
       private
+
+      def clear_return_path
+        overview = Config.overview_page(active_admin_namespace)
+        return collection_path unless overview
+
+        overview.route_collection_path({}, params.permit(*OVERVIEW_PARAMS).to_h.symbolize_keys)
+      end
 
       def queue_from_id(id)
         Param.decode(id).split("-", 3)[2] if id
