@@ -25,8 +25,9 @@ module ActiveAdmin
             ::Resque.info.slice(:pending, :failed, :workers)
           end
 
+          # Figures not shown by the jobs tabs or overview panels.
           def stats
-            info = ::Resque.info
+            info = ::Resque.info.slice(:processed)
             info[:scheduled] = ActiveAdmin::Jobs::ScheduledJob.all.count if supports?(:scheduled_jobs)
             redis_info = redis.info
             info.merge(

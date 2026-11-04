@@ -121,4 +121,4 @@ en:
         working:
           one: 1 Worker Working
           other: "%{count} Workers Working"
-        stats: Statistics
+        stats: Resque & Redis

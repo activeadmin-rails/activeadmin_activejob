@@ -32,13 +32,23 @@ RSpec.describe ActiveAdmin::Jobs::Adapters::Resque do
   end
 
   describe "#stats" do
-    it "includes Resque and Redis statistics" do
+    it "includes processed and Redis statistics" do
+      fail_jobs("b")
+
+      expect(adapter.stats.keys).to eq %i[processed scheduled redis_version redis_uptime_in_days
+                                          redis_connected_clients redis_used_memory]
+      expect(adapter.stats[:processed]).to be_an(Integer)
+      expect(adapter.stats[:redis_version]).to be_present
+    end
+  end
+
+  describe "#counts" do
+    it "counts pending and failed jobs and workers" do
       fail_jobs("b")
       enqueue_jobs("a")
       register_worker("default")
 
-      expect(adapter.stats).to include(pending: 1, failed: 1, workers: 1, working: 0, queues: 1)
-      expect(adapter.stats[:redis_version]).to be_present
+      expect(adapter.counts).to eq(pending: 1, failed: 1, workers: 1)
     end
   end
 end

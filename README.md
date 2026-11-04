@@ -86,7 +86,8 @@ Register the other screens the same way, each with a controller subclass:
 - **Queues** lists queue sizes. "Clear" removes a queue and its jobs, as resque-web does.
 - **Workers** lists registered workers, working first, with their current jobs (read only).
 - **Jobs** (overview page) shows queue sizes (linking to their jobs), working workers
-  and Resque/Redis statistics, including failed and scheduled job counts.
+  and Resque/Redis statistics (processed and scheduled job counts, Redis version,
+  uptime, clients and memory).
 
 Queue names and worker ids may contain dots; they are percent-encoded in URLs.
 

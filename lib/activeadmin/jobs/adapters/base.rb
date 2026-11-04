@@ -81,7 +81,7 @@ module ActiveAdmin
           {}
         end
 
-        # @return [Hash] backend statistics for display, e.g. :pending, :processed, :failed
+        # @return [Hash] backend statistics for the overview, beyond #counts, e.g. :processed
         def stats
           not_implemented :stats
         end

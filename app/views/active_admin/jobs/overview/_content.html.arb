@@ -32,7 +32,7 @@ columns do
 
   column do
     panel I18n.t("active_admin.jobs.overview.stats") do
-      table_for stats.except(:servers).to_a, class: "job-stats" do
+      table_for stats.to_a, class: "job-stats" do
         column(:name) { |name, _| name.to_s.humanize }
         column(:value) { |_, value| value }
       end

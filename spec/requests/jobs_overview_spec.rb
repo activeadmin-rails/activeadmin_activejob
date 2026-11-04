@@ -14,7 +14,7 @@ RSpec.describe "Jobs overview" do
 
     expect(response).to have_http_status(:ok)
     expect(page).to have_link "mail.high", href: "/admin/queued_jobs?queue=mail.high"
-    expect(page).to have_css "table.job-stats tr", text: /Failed\s+1/
+    expect(page).to have_no_css "table.job-stats tr", text: /Failed/
     expect(page).to have_css ".panel h3", text: "1 Worker Working"
     expect(page).to have_css "table.job-stats td", text: "Redis version"
   end
