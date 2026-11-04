@@ -1,5 +1,54 @@
-/* activeadmin_activejob: the jobs tabs, aligned with the page content. */
+/* activeadmin_activejob: the jobs tabs, as folder tabs on a rule below the
+   title bar, aligned with the page content. */
 #jobs_tabs {
-  padding: 16px var(--horizontal-page-margin, 30px) 0;
-  margin-bottom: 0;
+  margin: 16px 0 0;
+  padding: 0 var(--horizontal-page-margin, 30px);
+  border-bottom: 1px solid #d3d3d3;
+}
+
+#jobs_tabs ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#jobs_tabs li {
+  margin: 0 0 -1px;
+}
+
+#jobs_tabs a {
+  display: block;
+  padding: 7px 14px;
+  border: 1px solid #e3e3e3;
+  border-bottom-color: #d3d3d3;
+  border-radius: 4px 4px 0 0;
+  background: #f4f4f4;
+  color: #5e6469;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#jobs_tabs a:hover {
+  background: #eaeaea;
+  color: #323537;
+}
+
+#jobs_tabs li.selected a {
+  border-color: #d3d3d3;
+  border-bottom-color: #fff;
+  background: #fff;
+  color: #323537;
+  cursor: default;
+}
+
+#jobs_tabs .count {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: #e1e1e1;
+  color: #5e6469;
+  font-size: 0.85em;
 }

@@ -18,7 +18,7 @@ RSpec.describe "Jobs tabs" do
     enqueue_jobs("b", "c")
     get "/admin/jobs"
 
-    expect(tabs).to eq ["Overview", "Workers (0)", "Failed Jobs (1)", "Failure Stats", "Scheduled Jobs"]
+    expect(tabs).to eq ["Overview", "Workers 0", "Failed Jobs 1", "Failure Stats", "Scheduled Jobs"]
     expect(page).to have_link "Failure Stats", href: "/admin/failed_jobs/stats"
     expect(page).to have_link "Overview", href: "/admin/jobs"
   end
@@ -26,8 +26,8 @@ RSpec.describe "Jobs tabs" do
   {
     "/admin/jobs" => "Overview",
     "/admin/queued_jobs" => "Overview",
-    "/admin/workers" => "Workers (0)",
-    "/admin/failed_jobs" => "Failed Jobs (0)",
+    "/admin/workers" => "Workers 0",
+    "/admin/failed_jobs" => "Failed Jobs 0",
     "/admin/failed_jobs/stats" => "Failure Stats",
     "/admin/scheduled_jobs" => "Scheduled Jobs"
   }.each do |path, tab|
@@ -42,7 +42,7 @@ RSpec.describe "Jobs tabs" do
     fail_jobs("a")
     get "/admin/failed_jobs/#{ActiveAdmin::Jobs::FailedJob.all.first.id}"
 
-    expect(current_tab).to eq "Failed Jobs (1)"
+    expect(current_tab).to eq "Failed Jobs 1"
   end
 
   context "when not authorized to read a screen" do

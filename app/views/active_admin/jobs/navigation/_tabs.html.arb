@@ -2,13 +2,13 @@
 
 tabs = ActiveAdmin::Jobs::Tabs.for(self)
 if tabs.size > 1
-  div id: "jobs_tabs", class: "table_tools" do
-    ul class: "table_tools_segmented_control" do
+  nav id: "jobs_tabs" do
+    ul do
       tabs.each do |tab|
-        li class: ["scope", tab.id, ("selected" if tab.current)].compact.join(" ") do
-          a href: tab.path, class: "table_tools_button" do
+        li class: [tab.id, ("selected" if tab.current)].compact.join(" ") do
+          a href: tab.path, "aria-current": ("page" if tab.current) do
             text_node tab.label
-            span "(#{tab.badge})", class: "count" if tab.badge
+            span tab.badge, class: "count" if tab.badge
           end
         end
       end
